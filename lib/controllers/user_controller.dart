@@ -38,16 +38,34 @@ class UserController with ChangeNotifier {
 
 
 
-  Future<List<UserModel>> getUserWithArrondissement() async {
+  Future<List<UserModel>> getUserWithArrondissement({int? idArrond}) async {
     final List<UserModel> users= [];
-    try {
-      final response = await Supabase.instance.client
-          .from('users')
-          .select('id, nom,tel,email,password,adresse,role(id,role),arrondissements(id, arrondissement)').eq('role_id', 1);
 
-      for (var item in response) {
-        users.add(UserModel.fromJson(item));
+    try {
+      if(idArrond != null){
+        final response = await Supabase.instance.client
+            .from('users')
+            .select('id, nom,tel,email,password,adresse,role(id,role),arrondissements(id, arrondissement)').eq('arrondissement_id', idArrond).eq('role_id', 1);
+
+        for (var item in response) {
+          users.add(UserModel.fromJson(item));
+        }
+
       }
+      else{
+
+        final response = await Supabase.instance.client
+            .from('users')
+            .select('id, nom,tel,email,password,adresse,role(id,role),arrondissements(id, arrondissement)').eq('role_id', 1);
+
+        for (var item in response) {
+          users.add(UserModel.fromJson(item));
+        }
+
+
+      }
+
+
     } catch (e) {
       debugPrint("Erreur chargement des users : $e");
     }
@@ -167,7 +185,7 @@ class UserController with ChangeNotifier {
   }
 
 
-  Future<UserModel> getUserDetails() async {
+  Future<UserModel?> getUserDetails() async {
     final supabase = Supabase.instance.client;
     final userId = supabase.auth.currentUser?.id;
 
@@ -175,7 +193,7 @@ class UserController with ChangeNotifier {
       if (kDebugMode) {
         print("❌ Aucun utilisateur connecté.");
       }
-      return _list.first;
+      return null;
     }
 
     final data = await supabase
@@ -188,6 +206,10 @@ class UserController with ChangeNotifier {
         .toList();
 
     notifyListeners();
+
+    if(_list.isEmpty){
+      return null ;
+    }
     return _list.first ;
   }
 

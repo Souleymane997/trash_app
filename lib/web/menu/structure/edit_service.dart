@@ -2,87 +2,60 @@
 
 import 'dart:async';
 
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:trash_app/controllers/structures_controller.dart';
-import 'package:trash_app/models/structure_model.dart';
+import 'package:trash_app/controllers/service_controllers.dart';
 
-import '../../../../controllers/arrond_controllers.dart';
-import '../../../../models/arrondissement.dart';
 import '../../../../shared/colors.dart';
 import '../../../../shared/custom_text.dart';
+import '../../../models/service_model.dart';
 
-class EditStructureDialog extends StatefulWidget {
-  const EditStructureDialog({super.key, required this.item});
-  final StructureModel item ;
+class EditService extends StatefulWidget {
+  const EditService({super.key, required this.item});
+  final ServiceModel item ;
 
 
   @override
-  State<EditStructureDialog > createState() => _EditStructureDialogState();
+  State<EditService > createState() => _EditServiceState();
 }
 
-class _EditStructureDialogState extends State<EditStructureDialog> {
-
+class _EditServiceState extends State<EditService> {
   final _formKey = GlobalKey<FormState>();
-  final nomStructureController = TextEditingController() ;
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final phoneController = TextEditingController();
+  final TextEditingController nomOptionController = TextEditingController() ;
+  final TextEditingController nbreController = TextEditingController() ;
+  final TextEditingController tarifController = TextEditingController() ;
+  final TextEditingController descController = TextEditingController() ;
 
 
-  int idArrond = 0 ;
   bool isLoad = true ;
   bool isDelete = false ;
 
-  late List<ArrondissementModel> listArrond = [] ;
-  ArrondissementModel? selectedArrondissement;
 
-  getListArrond() async {
-    List<ArrondissementModel> list = await ArrondController().getListArrondissement();
-    setState(() {
-      listArrond= list ;
-    });
-
-    for (int i = 0; i < listArrond.length; i++) {
-      if(listArrond[i].id == widget.item.arrondissement_id){
-        setState(() {
-          selectedArrondissement = listArrond[i] ;
-          idArrond = listArrond[i].id! ;
-        });
-        break ;
-
-      }
-    }
-  }
 
 
   @override
   void initState() {
     super.initState();
-    nomStructureController.text = widget.item.nomStructure;
-    emailController.text = widget.item.email;
-    phoneController.text = widget.item.tel;
-    passwordController.text = widget.item.password;
-
-    getListArrond() ;
+    nomOptionController.text = widget.item.nom_service ;
+    nbreController.text = widget.item.nbre.toString() ;
+    tarifController.text = widget.item.tarif.toString() ;
+    descController.text = widget.item.description ;
   }
 
-  _delete(String id) async {
+  _delete(int id) async {
     setState(() {
       isLoad = false ;
     });
 
-    bool res = await StructureController().deleteStructure(id);
+    bool res = await ServiceController().deleteService(id);
     if (kDebugMode) {
       print(res.toString()) ;
     }
 
     if(res){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Structure Supprimé') , backgroundColor: vert(),),
+        SnackBar(content: Text('Service Supprimé') , backgroundColor: vert(),),
       );
       Timer(Duration(seconds: 2), () {
         setState(() {
@@ -100,23 +73,22 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
   }
 
 
-  _submit( String id) async {
+  _submit( int idStructure) async {
     setState(() {
       isLoad = false ;
     });
 
-    idArrond = selectedArrondissement?.id ?? 0 ;
+    ServiceModel item = ServiceModel(service_id: 1, structure_id: widget.item.structure_id, nom_service:nomOptionController.text, nbre: int.parse(nbreController.text) , tarif: int.parse(tarifController.text), description: descController.text) ;
 
-    StructureModel item = StructureModel( id:"1" ,nomStructure: nomStructureController.text, tel: phoneController.text, arrondissement_id: idArrond, arrondissement:"", email: emailController.text, password: passwordController.text, role_id: 2) ;
 
-    bool res = await StructureController().editStructure(id: id, item: item) ;
+    bool res = await ServiceController().editService(id: idStructure, item: item) ;
     if (kDebugMode) {
       print(res.toString()) ;
     }
 
     if(res){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Structure modifié') , backgroundColor: vert(),),
+        SnackBar(content: Text('Service modifié') , backgroundColor: vert(),),
       );
       Timer(Duration(seconds: 2), () {
         setState(() {
@@ -159,7 +131,7 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          isDelete?Center(child: CustomText('Supprimer Structure', color: vert(),fontWeight: FontWeight.w700,tex: 1.5,)): Center(child: CustomText('Modifier Structure', color: vert(),fontWeight: FontWeight.w700,tex: 1.5,)),
+          isDelete?Center(child: CustomText('Supprimer Secteur', color: vert(),fontWeight: FontWeight.w700,tex: 1.5,)): Center(child: CustomText('Modifier Secteur', color: vert(),fontWeight: FontWeight.w700,tex: 1.5,)),
           SizedBox(width: 10,) ,
           IconButton(onPressed: (){ setState(() {
             isDelete = !isDelete ;
@@ -178,90 +150,58 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
                   width: (MediaQuery.of(context).size.width > 500 )?MediaQuery.of(context).size.height * 0.35 : 300,
                   child: TextFormField(
                     textAlign: TextAlign.start,
-                    controller: nomStructureController,
-                    decoration: _inputDecoration("Structure"),
+                    controller: nomOptionController,
+                    decoration: _inputDecoration("nom de l'option "),
                     keyboardType:TextInputType.text,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Structure requis';
+                      if (value == null || value.isEmpty) return 'nom requis';
                       return null;
                     },
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 15),
                 SizedBox(
                   width: (MediaQuery.of(context).size.width > 500 )?MediaQuery.of(context).size.height * 0.35 : 300,
                   child: TextFormField(
                     textAlign: TextAlign.start,
-                    controller: emailController,
-                    decoration: _inputDecoration("email"),
-                    keyboardType:TextInputType.emailAddress,
+                    controller: nbreController,
+                    decoration: _inputDecoration("nombre"),
+                    keyboardType:TextInputType.number,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'email requis';
+                      if (value == null || value.isEmpty) return 'nombre requis';
                       return null;
                     },
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 15),
                 SizedBox(
                   width: (MediaQuery.of(context).size.width > 500 )?MediaQuery.of(context).size.height * 0.35 : 300,
                   child: TextFormField(
                     textAlign: TextAlign.start,
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: _inputDecoration("password"),
-                    keyboardType:TextInputType.text,
+                    controller: tarifController,
+                    decoration: _inputDecoration("tarif"),
+                    keyboardType:TextInputType.number,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'password requis';
-                      if (value.length < 6) return '6 caractères minimum';
+                      if (value == null || value.isEmpty) return 'tarif requis';
                       return null;
                     },
                   ),
                 ),
-                SizedBox(height: 20),
-                IntlPhoneField(
-                  controller: phoneController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Téléphone',
-                    contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(color: vert()),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(color: vert(), width: 2),
-                    ),
-                    filled: true,
-                    fillColor: blanc(),
+                SizedBox(height: 15),
+                SizedBox(
+                  width: (MediaQuery.of(context).size.width > 500 )?MediaQuery.of(context).size.height * 0.35 : 300,
+                  child: TextFormField(
+                    textAlign: TextAlign.start,
+                    controller: descController,
+                    decoration: _inputDecoration("description"),
+                    keyboardType:TextInputType.multiline,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'description requis';
+                      return null;
+                    },
                   ),
-                  initialCountryCode: 'BF', // Code pays par défaut
-                  onChanged: (phone) {
-                    phoneController.text = phone.number;
-                    if (kDebugMode) {
-                      print('Numéro complet : ${phoneController.text}');
-                    }
-                  },
                 ),
-                SizedBox(height: 8),
-                CustomDropdown<ArrondissementModel>(
-                  hintText: 'Arrondissement',
-                  decoration: CustomDropdownDecoration(
-                    closedBorder: Border.all(
-                      color: vert(),
-                      width: 1.0,
-                    ),
-                  ),
-                  items: listArrond,
-                  initialItem: selectedArrondissement,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedArrondissement = value;
-                    });
-                    debugPrint("Arrondissement sélectionné : ${value?.arrondissement}");
-                  },
-                ),
-                SizedBox(height: 10),
+                SizedBox(height: 15),
               ],
             ),
           ),
@@ -286,9 +226,9 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
                   ),
                 ),
                 onPressed: () {
-
-                    _delete(widget.item.id) ;
-
+                  if (_formKey.currentState!.validate()) {
+                    _delete(widget.item.service_id) ;
+                  }
                 },
                 child: const Text('Confirmer suppression'),
               ),
@@ -321,7 +261,7 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  _submit(widget.item.id) ;
+                  _submit(widget.item.service_id) ;
                 }
               },
               child: const Text('valider'),

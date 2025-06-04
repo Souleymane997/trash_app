@@ -2,52 +2,57 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:trash_app/controllers/user_controller.dart';
+import 'package:trash_app/controllers/service_controllers.dart';
+import 'package:trash_app/models/service_model.dart';
 
-import '../../../models/users_model.dart';
+import '../../../controllers/structures_controller.dart';
+import '../../../models/structure_model.dart';
 import '../../../shared/colors.dart';
 import '../../../shared/custom_text.dart';
 import '../components/content_view.dart';
 import '../components/page_header.dart';
 import '../components/summary_card.dart';
-import 'add_admin.dart';
-import 'edit_admin.dart';
+import 'add_service.dart';
+import 'edit_service.dart';
 
-class AdminPage extends StatefulWidget {
-  const AdminPage({super.key});
+class ServicesPages extends StatefulWidget {
+  const ServicesPages({super.key});
 
   @override
-  State<AdminPage> createState() => _AdminPageState();
+  State<ServicesPages> createState() => _ServicesPagesState();
 }
 
-class _AdminPageState extends State<AdminPage> {
+class _ServicesPagesState extends State<ServicesPages> {
 
-
-  late List<UserModel> listUsers = [];
-
+  late List<ServiceModel> list= [];
+  String idStructure = '';
   bool isLoad = false ;
+  bool isDelete = true ;
   int nbre = 0 ;
 
-  Future<void> openAddAdminDialog() async {
+
+
+  Future<void> openAddServiceDialog() async {
     final success = await showDialog<bool>(
       context: context,
-      builder: (context) =>AddAdminDialog()
+      builder: (context) =>AddService(idStructure: idStructure,)
     );
     if (success == true) {
       getList();
     }
   }
 
-  Future<void> openEditAdminDialog(UserModel item) async {
+
+
+  Future<void> openEditServiceDialog(ServiceModel item) async {
     final success = await showDialog<bool>(
       context: context,
-      builder: (context) => EditAdminDialog(item: item,),
+      builder: (context) => EditService(item: item,),
     );
     if (success == true) {
       getList();
@@ -57,16 +62,26 @@ class _AdminPageState extends State<AdminPage> {
 
 
   getList() async {
-    List<UserModel> list = await  UserController().getAdminWithArrondissement() ;
-    setState(() {
-      listUsers = list ;
-    });
-    Timer(Duration(seconds: 2), () {
+
+    StructureModel? item = await  StructureController().getStructureDetails() ;
+    if(item !=  null){
       setState(() {
-        isLoad = true ;
-        nbre = listUsers.length ;
+        idStructure = item.id ;
       });
-    });
+
+      List<ServiceModel> listItem = await ServiceController().getList(item.id);
+      setState(() {
+        list = listItem ;
+      });
+      Timer(Duration(seconds: 2), () {
+        setState(() {
+          isLoad = true ;
+          nbre = list.length ;
+        });
+      });
+    }
+
+
   }
 
   @override
@@ -76,17 +91,11 @@ class _AdminPageState extends State<AdminPage> {
   }
 
 
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveBreakpoints.of(context);
     var summaryCards = [
-      SummaryCard(title: "Nombre d'Administrateurs ", value: '$nbre'),
+      SummaryCard(title: "Nombre de Structures", value: '0'),
     ];
 
 
@@ -94,8 +103,8 @@ class _AdminPageState extends State<AdminPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const PageHeader(
-          title: 'Gestion des Administrateurs',
-          description: "Vue d'ensemble des Administrateurs",
+          title: 'Gestion des Services',
+          description: "Vue d'ensemble des structures",
         ),
         const Gap(16),
         if (responsive.isMobile)
@@ -120,7 +129,7 @@ class _AdminPageState extends State<AdminPage> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: ElevatedButton(
-                onPressed:  openAddAdminDialog,
+                onPressed:  openAddServiceDialog,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: vert(),
                   foregroundColor: blanc(),
@@ -146,6 +155,7 @@ class _AdminPageState extends State<AdminPage> {
                 ),
               ),
             ),
+
           ],
         ),
 
@@ -153,11 +163,12 @@ class _AdminPageState extends State<AdminPage> {
 
         isLoad?
         Expanded(
-          child:  listView(listUsers),
+          child:  listView(list),
         ) : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
         )),
+
 
       ],
     ));
@@ -165,7 +176,8 @@ class _AdminPageState extends State<AdminPage> {
 
 
 
-  Widget listView(List<UserModel> list){
+  Widget listView(List<ServiceModel> list){
+
     if(list.isEmpty)
     {
       return Center(child:Column(
@@ -178,23 +190,21 @@ class _AdminPageState extends State<AdminPage> {
               height: 100,
               width:100,
               color: noir(),
-              semanticsLabel: 'empty',
+              semanticsLabel: 'structure',
             ),
           ),
           CustomText("Liste vide !!", color: noir(),) ,
         ],
       ) ,) ;
     }
+
     return ListView.separated(
       itemCount: list.length,
       itemBuilder: (context, index) {
-        UserModel user = list[index] ;
+        ServiceModel item = list[index] ;
         return GestureDetector(
           onTap:(){
-            if (kDebugMode) {
-              print(user.id.toString()) ;
-            }
-            openEditAdminDialog(user) ;
+            openEditServiceDialog(item) ;
           } ,
           child: SizedBox(
             width: double.infinity,
@@ -204,15 +214,22 @@ class _AdminPageState extends State<AdminPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${index+1}', style:TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
-                    Text(user.nom, style:TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
                     Padding(
                       padding: const EdgeInsets.all(3.0),
                       child: SvgPicture.asset(
-                        'assets/icons/admin.svg',
+                        'assets/icons/serv.svg',
                         height: 40,
                         width:40,
-                        semanticsLabel: 'admin',
+                        semanticsLabel: 'structure',
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(item.nom_service, style:TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
+                          Text('${item.nbre} fois/semaine : ${item.tarif} Fcfa', style:TextStyle(fontSize: 12 , fontWeight: FontWeight.w300),)
+                        ],
                       ),
                     ),
                   ],
@@ -225,5 +242,4 @@ class _AdminPageState extends State<AdminPage> {
       separatorBuilder: (context, index) => Divider(),
     ) ;
   }
-
 }

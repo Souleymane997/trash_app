@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -10,7 +12,8 @@ import '../../../shared/colors.dart';
 import '../../../shared/custom_text.dart';
 
 class NavigationAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const NavigationAppBar({super.key});
+  const NavigationAppBar({super.key, required this.roleUser});
+  final int? roleUser ;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +23,7 @@ class NavigationAppBar extends StatelessWidget implements PreferredSizeWidget {
       iconTheme: const IconThemeData(color: Colors.white),
       title: isMobile? Row(
         children: [
+          (roleUser==2)? CustomText('TrashApp', tex: 1.5, fontWeight: FontWeight.w700,):
           CustomText('TrashApp Admin', tex: 1.5, fontWeight: FontWeight.w700,),
         ],
       ):
@@ -32,13 +36,14 @@ class NavigationAppBar extends StatelessWidget implements PreferredSizeWidget {
               backgroundImage: AssetImage('assets/logos/logo1.png'),
             ),
           ),
+          (roleUser==2)? CustomText('TrashApp', tex: 1.5, fontWeight: FontWeight.w700,):
           CustomText('TrashApp Admin', tex: 1.5, fontWeight: FontWeight.w700,),
         ],
       ),
       centerTitle: false,
       elevation: 4,
       actions: [
-        CustomText('admin',),
+        (roleUser==2)?CustomText('Collector') : CustomText('Admin'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: PopupMenuButton<void>(
@@ -85,22 +90,22 @@ class NavigationAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => AppBar().preferredSize;
 }
 
-void showLoadingDialog(BuildContext context, {String message = 'Chargement...'}) {
+void showLoadingDialog(BuildContext context, {String message = 'deconnection...'}) {
   showDialog(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
       return Dialog(
-        backgroundColor: Colors.white,
+        backgroundColor: red(),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const CircularProgressIndicator(),
+              CircularProgressIndicator(color: blanc(),),
               const SizedBox(width: 20),
-              Text(message),
+              Text(message,style: TextStyle(color: blanc()),),
             ],
           ),
         ),

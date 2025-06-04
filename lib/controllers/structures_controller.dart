@@ -37,13 +37,43 @@ class StructureController with ChangeNotifier {
 
 
 
+  Future<StructureModel?> getStructureDetails() async {
+    final supabase = Supabase.instance.client;
+    final userId = supabase.auth.currentUser?.id;
+
+    if (userId == null) {
+      if (kDebugMode) {
+        print("❌ Aucun utilisateur connecté.");
+      }
+      return null;
+    }
+
+    final data = await supabase
+        .from('structures')
+        .select('id, nom_structure,tel,email,password, arrondissements(id, arrondissement),role(id)').eq('id', userId) ;
+
+    _listStructure = (data as List)
+        .map((e) => StructureModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+
+    notifyListeners();
+
+    if(_listStructure.isEmpty){
+      return null ;
+    }
+    return _listStructure.first ;
+  }
+
+
+
+
 
   Future<List<StructureModel>> getStructureWithArrondissement() async {
     final List<StructureModel> structures = [];
     try {
       final response = await Supabase.instance.client
           .from('structures')
-          .select('id, nom_structure,tel,email,password, arrondissements(id, arrondissement)');
+          .select('id, nom_structure,tel,email,password, arrondissements(id, arrondissement),role(id)');
 
       for (var item in response) {
         structures.add(StructureModel.fromJson(item));
@@ -57,18 +87,25 @@ class StructureController with ChangeNotifier {
 
   Future<bool> addAStructure(StructureModel item) async {
 
+    final supabase = Supabase.instance.client;
+
+
     try {
-      final response = await supabase.from('structures').insert({
+     final  response = await supabase.auth.signUp(email: item.email, password: item.password);
+      final user = response.user;
+      if (user == null) throw Exception("Échec de l'inscription");
+
+      await supabase.from('structures').insert({
+        'id': user.id,
         'nom_structure': item.nomStructure,
         'tel': item.tel,
         'email': item.email,
         'arrondissement_id': item.arrondissement_id,
-        'password': item.password
+        'password': item.password,
+        'role_id': 2
       });
 
-      if (kDebugMode) {
-        print('Structure ajouté : $response');
-      }
+
       notifyListeners();
       return true;
 
@@ -83,7 +120,7 @@ class StructureController with ChangeNotifier {
 
 
   Future<bool> editStructure({
-    required int id,
+    required String id,
     required StructureModel item
 
   }) async {
@@ -93,7 +130,8 @@ class StructureController with ChangeNotifier {
         'tel': item.tel,
         'email': item.email,
         'arrondissement_id': item.arrondissement_id,
-        'password': item.password
+        'password': item.password,
+        'role_id': 2
       }).eq('id', id);
 
       notifyListeners();
@@ -106,7 +144,7 @@ class StructureController with ChangeNotifier {
 
 
 
-  Future<bool> deleteStructure(int id) async {
+  Future<bool> deleteStructure(String id) async {
     try {
       final response = await supabase.from('structures').delete().eq('id', id);
 

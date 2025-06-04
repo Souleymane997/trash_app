@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 import 'platform.dart';
@@ -8,6 +9,8 @@ import 'platform.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  prefs.getInt('idRole') ?? 0;
 
   await Supabase.initialize(
     url: 'https://syjsibsbjickquqpvjae.supabase.co',

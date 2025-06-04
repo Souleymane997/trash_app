@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -18,7 +21,8 @@ import '../components/page_header.dart';
 import '../components/summary_card.dart';
 
 class UsersPage extends StatefulWidget {
-  const UsersPage({super.key});
+  const UsersPage({super.key, required this.idRole});
+  final int idRole ;
 
   @override
   State<UsersPage> createState() => _UsersPageState();
@@ -31,9 +35,11 @@ class _UsersPageState extends State<UsersPage> {
   bool isLoad = false ;
   int nbre = 0 ;
   int nbreStructure = 0 ;
+  StructureModel? structure ;
+  int idArrond = 0 ;
 
-  getList() async {
-    List<UserModel> listUsers = await UserController().getUserWithArrondissement();
+  getList({int? idArrond}) async {
+    List<UserModel> listUsers = await UserController().getUserWithArrondissement(idArrond: idArrond);
     setState(() {
       list = listUsers ;
     });
@@ -57,10 +63,39 @@ class _UsersPageState extends State<UsersPage> {
     });
   }
 
+  getUserData() async {
+
+      List<StructureModel> listItem = await StructureController().getStructureWithArrondissement() ;
+      if(listItem.isNotEmpty){
+        setState(() {
+          structure = listItem.first ;
+          idArrond = structure!.arrondissement_id ;
+        });
+      }
+
+      Timer(Duration(seconds: 2), () {
+        if(widget.idRole == 2){
+          getList(idArrond: structure?.arrondissement_id) ;
+        }else{
+          getList() ;
+        }
+
+      });
+
+
+  }
+
+
   @override
   void initState() {
     super.initState();
-    getList() ;
+    getUserData() ;
+
+    if (kDebugMode) {
+      print('homeweb') ;
+      print(widget.idRole) ;
+    }
+
   }
 
 
@@ -69,7 +104,9 @@ class _UsersPageState extends State<UsersPage> {
     final responsive = ResponsiveBreakpoints.of(context);
     var summaryCards = [
       SummaryCard(title: "Nombre d'Utilisateurs ", value: '$nbre'),
-      SummaryCard(title: 'Nombre de Structure', value: '$nbreStructure'),
+      (widget.idRole == 3 || widget.idRole == 4 )
+          ? SummaryCard(title: 'Nombre de Structure', value: '$nbreStructure')
+          : SizedBox.shrink(), // ou rien du tout avec ...[]
     ];
 
     return ContentView(
@@ -134,7 +171,7 @@ class _TableView extends StatelessWidget {
               semanticsLabel: 'structure',
             ),
           ),
-          CustomText("Liste vide !!", color: noir(),),
+          CustomText("Liste d'Utilisateurs vide !!", color: noir(),),
         ],
       ),);
     }

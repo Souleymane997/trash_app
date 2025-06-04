@@ -1,8 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trash_app/controllers/structures_controller.dart';
 import 'package:trash_app/controllers/user_controller.dart';
+import 'package:trash_app/models/structure_model.dart';
 
+import '../../models/users_model.dart';
 import '../../shared/colors.dart';
 import '../../shared/custom_text.dart';
 import '../../shared/slidepage.dart';
@@ -27,6 +34,9 @@ class _LoginWebState extends State<LoginWeb> {
   bool change = false ;
   int _seconds = 3;
   late Timer _timer;
+  int idRole = 0 ;
+
+
 
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
@@ -46,7 +56,10 @@ class _LoginWebState extends State<LoginWeb> {
     );
   }
 
+
   Future<void> _login() async {
+    final prefs = await SharedPreferences.getInstance();
+
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
@@ -54,23 +67,77 @@ class _LoginWebState extends State<LoginWeb> {
       setState(() {
         change = true ;
       });
-
       bool res = await UserController().loginUser( email: email, password: password) ;
 
       if (res) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Connexion en cours...') , backgroundColor: vert(),),
-        );
-        _startCountdown() ;
+        UserModel? item = await UserController().getUserDetails();
+
+        if(item != null){
+          if (kDebugMode) {
+            print(item.nom) ;
+            print(item.role_id) ;
+          }
+
+          await prefs.setInt('idRole', item.role_id);
+
+          if(item.role_id == 1 || item.role_id == 5){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Erreur de Connexion ...') , backgroundColor: red(),),
+            );
+            setState(() {
+              change = false ;
+            });
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Connexion en cours...') , backgroundColor: vert(),),
+            );
+            _startCountdown() ;
+          }
+        }
+        else{
+          List<StructureModel> listItem = await StructureController().getStructureWithArrondissement() ;
+          if(listItem.isNotEmpty){
+            StructureModel item = listItem.first ;
+            if (kDebugMode) {
+              print(item.nomStructure) ;
+              print(item.role_id) ;
+            }
+
+            await prefs.setInt('idRole', item.role_id);
+
+            if(item.role_id == 1 || item.role_id == 5){
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Erreur de Connexion ...') , backgroundColor: red(),),
+              );
+              setState(() {
+                change = false ;
+              });
+            }else{
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Connexion en cours...') , backgroundColor: vert(),),
+              );
+              setState(() {
+                idRole = item.role_id ;
+              });
+              _startCountdown() ;
+            }
+          }
+        }
+
+        setState(() {
+          idRole = prefs.getInt('idRole') ?? 0;
+          if (kDebugMode) {
+            print('idRole login $idRole') ;
+          }
+        });
+
       }else{
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erreur de Connexion ...') , backgroundColor: red(),),
         );
-
         setState(() {
           change = false ;
         });
-
       }
     }
   }
@@ -90,11 +157,12 @@ class _LoginWebState extends State<LoginWeb> {
   }
 
   void _navigateToNextPage() {
+
     Navigator.pushReplacement(
         context,
         SlideRightRoute(
-            child: HomeWebView(),
-            page:HomeWebView(),
+            child: HomeWebView(idRole: idRole,),
+            page:HomeWebView(idRole: idRole,),
             direction: AxisDirection.left)
     );
   }

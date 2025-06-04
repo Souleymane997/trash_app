@@ -61,7 +61,7 @@ class _AddStructureDialogState extends State<AddStructureDialog> {
       });
       int idArrond = selectedArrondissement?.id ?? 0 ;
 
-      StructureModel item = StructureModel(nomStructure: nomStructureController.text, tel: phoneController.text, arrondissement_id: idArrond, arrondissement:"", email: emailController.text, password: passwordController.text) ;
+      StructureModel item = StructureModel(id: "1",nomStructure: nomStructureController.text, tel: phoneController.text, arrondissement_id: idArrond, arrondissement:"", email: emailController.text, password: passwordController.text, role_id: 2) ;
       bool res = await StructureController().addAStructure(item);
 
       if (kDebugMode) {

@@ -2,22 +2,24 @@
 
 
 class StructureModel {
-  int? id;
+  late String id;
   late String nomStructure;
   late String tel;
   late String email;
   late int arrondissement_id;
   late String arrondissement;
   late String password;
+  late int role_id;
 
   StructureModel (
-      {this.id,
+      {required this.id,
         required this.nomStructure,
         required this.tel,
         required this.arrondissement_id,
         required this.arrondissement,
         required this.email,
-        required this.password
+        required this.password,
+        required this.role_id
       });
 
 
@@ -29,7 +31,8 @@ class StructureModel {
       arrondissement: json['arrondissements']['arrondissement'],
       email: json['email'],
       password: json['password'],
-      tel: json['tel']
+      tel: json['tel'],
+      role_id: json['role']['id'],
     );
   }
 }

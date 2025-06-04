@@ -1,9 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:trash_app/controllers/user_controller.dart';
 import 'package:trash_app/shared/colors.dart';
+import 'package:trash_app/web/menu/structure/notif.dart';
+import 'package:trash_app/web/menu/structure/services.dart';
 import 'package:trash_app/web/menu/structure/structure.dart';
 import 'package:trash_app/web/menu/users/admin.dart';
 import 'package:trash_app/web/menu/users/users.dart';
@@ -11,13 +13,13 @@ import 'package:trash_app/web/menu/settings/arrondissement/arrond.dart';
 import 'package:trash_app/web/menu/settings/role/role.dart';
 import 'package:trash_app/web/menu/settings/secteur/secteur.dart';
 
-import '../../models/users_model.dart';
 import '../../shared/custom_text.dart';
 import 'components/appbar.dart';
 
 
 class AccueilPage extends StatefulWidget {
-  const AccueilPage({super.key});
+  const AccueilPage({super.key, required this.idRole});
+  final int idRole ;
 
   @override
   State<AccueilPage> createState() => _AccueilPageState();
@@ -25,16 +27,115 @@ class AccueilPage extends StatefulWidget {
 
 class _AccueilPageState extends State<AccueilPage> {
   int _selectedIndex = 0;
-  UserModel? user ;
 
-  final List<Widget> _pages = const [
-    UsersPage(),
-    StructuresPage(),
-    ArrondPage(),
-    SecteurPage(),
-    RolePage(),
-    AdminPage()
-  ];
+  late final List<String> titles;
+  late final List<String> path;
+  late final List<Widget> pages ;
+
+  getListPages(){
+
+    if(widget.idRole == 2){
+
+
+
+
+
+      setState(() {
+        pages = [
+          UsersPage(idRole: widget.idRole,),
+          NotifPage(),
+          ServicesPages(),
+        ];
+
+        titles = [
+          'Dashbord',
+          'Notifications',
+          'Services',
+        ];
+
+        path = [
+          'dash.svg',
+          'notif.svg',
+          'setting.svg'
+        ];
+      });
+
+    }
+    else{
+
+      if(widget.idRole == 3){
+        setState(() {
+          pages = [
+            UsersPage(idRole: widget.idRole,),
+            StructuresPage(),
+            ArrondPage(),
+            SecteurPage(),
+          ];
+
+          titles = [
+            'Dashbord',
+            'Structures',
+            'Arrondissement',
+            'Secteur',
+          ];
+
+          path = [
+            'dash.svg',
+            'structure.svg',
+            'arrond.svg',
+            'sect.svg',
+          ];
+        });
+      }else{
+          setState(() {
+            pages = [
+              UsersPage(idRole: widget.idRole,),
+              StructuresPage(),
+              ArrondPage(),
+              SecteurPage(),
+              RolePage(),
+              AdminPage(),
+            ];
+
+
+            titles = [
+              'Dashbord',
+              'Structures',
+              'Arrondissement',
+              'Secteur',
+              'Role',
+              'Admin',
+            ];
+            path = [
+              'dash.svg',
+              'structure.svg',
+              'arrond.svg',
+              'sect.svg',
+              'role.svg',
+              'admin.svg',
+            ];
+          });
+
+
+
+      }
+    }
+  }
+
+
+  @override
+  initState(){
+    super.initState();
+
+    getListPages() ;
+    if (kDebugMode) {
+      print('home') ;
+      print(widget.idRole) ;
+    }
+
+  }
+
+
 
   void _onDestinationSelected(int index) {
     setState(() {
@@ -43,18 +144,6 @@ class _AccueilPageState extends State<AccueilPage> {
     Navigator.of(context).maybePop(); // Ferme le drawer si ouvert (mobile)
   }
 
-  getUserData() async {
-    UserModel item = await UserController().getUserDetails();
-    setState(() {
-      user = item ;
-    });
-  }
-
-  @override
-  initState(){
-    super.initState();
-    getUserData() ;
-  }
 
 
 
@@ -66,10 +155,9 @@ class _AccueilPageState extends State<AccueilPage> {
     final double size = 25 ;
     final double sizeDrawer = 15 ;
     return Scaffold(
-      appBar: NavigationAppBar(),
+      appBar: NavigationAppBar(roleUser:widget.idRole),
       drawer: isMobile
           ? Drawer(
-
         child: ListView(
           children: [
             DrawerHeader(
@@ -91,96 +179,25 @@ class _AccueilPageState extends State<AccueilPage> {
                 ],
               ),
             )),
-            ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(
-                  'assets/icons/dash.svg',
-                  height: sizeDrawer,
-                  width: sizeDrawer,
-                  semanticsLabel: 'dash',
-                ),
-              ),
-              title: const Text('Dashbord'),
-              selected: _selectedIndex == 0,
-              onTap: () => _onDestinationSelected(0),
-            ),
-            ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(
-                  'assets/icons/structure.svg',
-                  height: sizeDrawer,
-                  width: sizeDrawer,
-                  semanticsLabel: 'structure',
-                ),
-              ),
-              title: const Text('Structure'),
-              selected: _selectedIndex == 1,
-              onTap: () => _onDestinationSelected(1),
-            ),
-            ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(
-                  'assets/icons/arrond.svg',
-                  height: sizeDrawer,
-                  width: sizeDrawer,
-                  semanticsLabel: 'arrond',
-                ),
-              ),
-              title: const Text('Arrondissement'),
-              selected: _selectedIndex == 2,
-              onTap: () => _onDestinationSelected(2),
-            ),
-            ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(
-                  'assets/icons/sect.svg',
-                  height: sizeDrawer,
-                  width: sizeDrawer,
-                  semanticsLabel: 'secteur',
-                ),
-              ),
-              title: const Text('Secteur'),
-              selected: _selectedIndex == 3,
-              onTap: () => _onDestinationSelected(3),
-            ),
-            ...[
-              if (user?.role_id == 4)
-                ListTile(
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/role.svg',
-                      height: sizeDrawer,
-                      width: sizeDrawer,
-                      semanticsLabel: 'role',
-                    ),
+
+            for (int i = 0; i < pages.length; i++)
+              ListTile(
+                leading: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/icons/${path[i]}',
+                    height: sizeDrawer,
+                    width: sizeDrawer,
+                    semanticsLabel:  path[i],
                   ),
-                  title: const Text('role'),
-                  selected: _selectedIndex == 4,
-                  onTap: () => _onDestinationSelected(4),
                 ),
-            ],
-            ...[
-              if (user?.role_id == 4)
-            ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(
-                  'assets/icons/admin.svg',
-                  height: sizeDrawer,
-                  width: sizeDrawer,
-                  semanticsLabel: 'admin',
-                ),
+                title: Text(titles[i]),
+                selected: i == _selectedIndex,
+                onTap: () {
+                  _onDestinationSelected(i);
+                  Navigator.pop(context);
+                },
               ),
-              title: const Text('admin'),
-              selected: _selectedIndex == 5,
-              onTap: () => _onDestinationSelected(5),
-            ),
-          ],
           ],
         ),
       )
@@ -191,98 +208,26 @@ class _AccueilPageState extends State<AccueilPage> {
             NavigationRail(
               selectedIndex: _selectedIndex,
               onDestinationSelected: _onDestinationSelected,
-              labelType: NavigationRailLabelType.selected,
-              elevation: 8,
+              labelType: NavigationRailLabelType.all,
               destinations: [
-                NavigationRailDestination(
-                  icon: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/dash.svg',
-                      height: size,
-                      width: size,
-                      color: noir(),
-                      semanticsLabel: 'dash',
-                    ),
-                  ),
-                  label: Text('Dashbord'),
-                ),
-                NavigationRailDestination(
-                  icon: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/structure.svg',
-                      height: size,
-                      width: size,
-                      color: noir(),
-                      semanticsLabel: 'structure',
-                    ),
-                  ),
-                  label: Text('Structure'),
-                ),
-                NavigationRailDestination(
-                  icon: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/arrond.svg',
-                      height: size,
-                      width: size,
-                      color: noir(),
-                      semanticsLabel: 'arrond',
-                    ),
-                  ),
-                  label: Text('Arrondissement'),
-                ),
-                NavigationRailDestination(
-                  icon: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/sect.svg',
-                      height: size,
-                      width: size,
-                      color: noir(),
-                      semanticsLabel: 'sect',
-                    ),
-                  ),
-                  label: Text('Secteur'),
-                ),
-                ...[
-                  if (user?.role_id == 4)
-                    NavigationRailDestination(
-                      icon: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/role.svg',
-                          height: size,
-                          width: size,
-                          color: noir(),
-                          semanticsLabel: 'role',
-                        ),
+                for (int i = 0; i < pages.length; i++)
+                  NavigationRailDestination(
+                    icon: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: SvgPicture.asset(
+                        'assets/icons/${path[i]}',
+                        height: size,
+                        width: size,
+                        color: noir(),
+                        semanticsLabel: path[i],
                       ),
-                      label: Text('Role'),
                     ),
-                ],
-
-              ...[
-                if (user?.role_id == 4)
-                NavigationRailDestination(
-                  icon: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/admin.svg',
-                      height: size,
-                      width: size,
-                      color: noir(),
-                      semanticsLabel: 'admin',
-                    ),
+                    label: Text(titles[i]),
                   ),
-                  label: Text('admin'),
-                ),
-              ],
               ],
             ),
           const VerticalDivider(width: 1),
-          Expanded(child: _pages[_selectedIndex]),
+          Expanded(child:  pages[_selectedIndex]) ,
         ],
       ),
 

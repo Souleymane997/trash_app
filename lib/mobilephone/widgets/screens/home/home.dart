@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -55,7 +57,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   getUserData() async {
-    UserModel item = await UserController().getUserDetails();
+    UserModel? item = await UserController().getUserDetails();
     setState(() {
       user = item;
       if (kDebugMode) {

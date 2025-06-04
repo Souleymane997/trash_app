@@ -59,8 +59,6 @@ class _SignupPageState extends State<SignupPage> {
     int idArrond = selectedArrondissement?.id ?? 0 ;
     String email = "user${_phoneController.text.trim()}@exemple.com" ;
 
-    print(email) ;
-
     UserModel item = UserModel(id: "1", nom: _usernameController.text, tel: _phoneController.text.trim(), email: email , password: _passwordController.text, adresse: _adresseController.text, role: '', role_id:1, arrondissement:'', arrondissement_id: idArrond) ;
 
     bool res = await UserController().signUpUser(item: item , email:email,) ;
