@@ -74,6 +74,7 @@ class _AddStructureDialogState extends State<AddStructureDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Structure Ajouté') , backgroundColor: vert(),),
         );
+
         Timer(Duration(seconds: 2), () {
           setState(() {
             isLoad = true ;

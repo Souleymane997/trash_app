@@ -37,8 +37,27 @@ class StructureController with ChangeNotifier {
 
 
 
-  Future<StructureModel?> getStructureDetails() async {
+  Future<StructureModel?> getStructureDetails({idArrond}) async {
     final supabase = Supabase.instance.client;
+
+    if(idArrond != null){
+      final data = await supabase
+          .from('structures')
+          .select('id, nom_structure,tel,email,password, arrondissements(id, arrondissement),role(id)').eq('arrondissement_id',idArrond) ;
+
+      _listStructure = (data as List)
+          .map((e) => StructureModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      notifyListeners();
+
+      if(_listStructure.isEmpty){
+        return null ;
+      }
+      return _listStructure.first ;
+    }
+
+
     final userId = supabase.auth.currentUser?.id;
 
     if (userId == null) {

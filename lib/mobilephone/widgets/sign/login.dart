@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../controllers/user_controller.dart';
+import '../../../models/users_model.dart';
 import '../../../shared/colors.dart';
 import '../../../shared/custom_text.dart';
 import '../../../shared/dialoguetoast.dart';
@@ -32,27 +35,48 @@ class _LoginPageState extends State<LoginPage> {
       isLoad = true;
     });
 
+    final prefs = await SharedPreferences.getInstance();
     final phone = _phoneController.text.trim();
     final password = _passwordController.text;
     bool res = await UserController().loginUser( email: "user$phone@exemple.com", password: password) ;
 
     if (res) {
 
-      Timer(Duration(seconds: 1), () {
-        DInfo.toastSuccess("Connection éffectué");
-      });
-      Timer(Duration(seconds: 2), () {
-        setState(() {
-          isLoad = false;
-        });
-        Navigator.pushReplacement(
-            context,
-            SlideRightRoute(
-                child: HomePage(),
-                page: HomePage(),
-                direction: AxisDirection.right)
-        );
-      });
+      UserModel? item = await UserController().getUserDetails();
+
+      if(item != null){
+
+        if (kDebugMode) {
+          print(item.nom) ;
+          print(item.role_id) ;
+        }
+        if(item.role_id == 1 ){
+          await prefs.setInt('idRole', item.role_id);
+          Timer(Duration(seconds: 1), () {
+            DInfo.toastSuccess("Connection éffectué");
+          });
+          Timer(Duration(seconds: 2), () {
+            setState(() {
+              isLoad = false;
+            });
+            Navigator.pushReplacement(
+                context,
+                SlideRightRoute(
+                    child: HomePage(),
+                    page: HomePage(),
+                    direction: AxisDirection.right)
+            );
+          });
+        }
+        else{
+          DInfo.toastError("Erreur de connexion");
+          setState(() {
+            isLoad = false;
+          });
+        }
+
+      }
+
     }else{
       DInfo.toastError("Erreur de connexion");
       setState(() {

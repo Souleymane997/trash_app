@@ -195,7 +195,6 @@ class UserController with ChangeNotifier {
       }
       return null;
     }
-
     final data = await supabase
         .from('users')
         .select('id, nom,tel,email,password,adresse,role(id,role),arrondissements(id, arrondissement)')

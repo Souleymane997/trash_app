@@ -6,7 +6,7 @@ class ServiceModel {
   late String structure_id;
   late String nom_service;
   late int nbre;
-  late int tarif ;
+  late double tarif ;
   late String description;
 
 

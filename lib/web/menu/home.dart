@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:trash_app/shared/colors.dart';
-import 'package:trash_app/web/menu/structure/notif.dart';
-import 'package:trash_app/web/menu/structure/services.dart';
+import 'package:trash_app/web/menu/notifications/notif.dart';
+import 'package:trash_app/web/menu/services/services.dart';
 import 'package:trash_app/web/menu/structure/structure.dart';
 import 'package:trash_app/web/menu/users/admin.dart';
 import 'package:trash_app/web/menu/users/users.dart';
@@ -32,11 +32,12 @@ class _AccueilPageState extends State<AccueilPage> {
   late final List<String> path;
   late final List<Widget> pages ;
 
-  getListPages(){
+  getListPages() async {
+
+
+
 
     if(widget.idRole == 2){
-
-
 
 
 
@@ -55,7 +56,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
         path = [
           'dash.svg',
-          'notif.svg',
+          'notif.svg' ,
           'setting.svg'
         ];
       });
@@ -218,7 +219,7 @@ class _AccueilPageState extends State<AccueilPage> {
                         'assets/icons/${path[i]}',
                         height: size,
                         width: size,
-                        color: noir(),
+                        color:noir(),
                         semanticsLabel: path[i],
                       ),
                     ),

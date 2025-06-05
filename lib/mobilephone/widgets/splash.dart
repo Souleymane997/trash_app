@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trash_app/mobilephone/widgets/screens/home/home.dart';
 
 
 import '../../shared/colors.dart';
@@ -18,27 +20,59 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   bool showLoading = false;
+  int idRole  = 0 ;
 
 
-  @override
-  void initState() {
-    super.initState();
+  getIdRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      idRole = prefs.getInt('idRole') ?? 0;
+    });
+
+
 
     Future.delayed(Duration(seconds: 2), () {
       setState(() {
         showLoading = true;
       });
 
-      Future.delayed(Duration(seconds: 5), () {
-        Navigator.pushReplacement(
-          context,
-            SlideRightRoute(
-                child: LoginPage(),
-                page: LoginPage(),
-                direction: AxisDirection.right)
-        );
-      });
+      if(idRole==1){
+        Future.delayed(Duration(seconds: 5), () {
+          Navigator.pushReplacement(
+              context,
+              SlideRightRoute(
+                  child: HomePage(),
+                  page: HomePage(),
+                  direction: AxisDirection.right)
+          );
+        });
+      }
+      else{
+        Future.delayed(Duration(seconds: 5), () {
+          Navigator.pushReplacement(
+              context,
+              SlideRightRoute(
+                  child: LoginPage(),
+                  page: LoginPage(),
+                  direction: AxisDirection.right)
+          );
+        });
+
+      }
+
+
+
+
+
     });
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    getIdRole() ;
   }
 
 

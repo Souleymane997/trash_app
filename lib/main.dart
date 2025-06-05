@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
@@ -16,7 +17,11 @@ Future<void> main() async {
     url: 'https://syjsibsbjickquqpvjae.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5anNpYnNiamlja3F1cXB2amFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc1NzcyNTMsImV4cCI6MjA2MzE1MzI1M30.iEUPHZB67TxiNo8x7E85jc_Aug9p9VTcVuR3WQJDo60',
   );
-  runApp(const MyApp());
+
+  runApp(
+    OKToast(
+    child: MyApp(),
+  ),);
 }
 
 class MyApp extends StatelessWidget {

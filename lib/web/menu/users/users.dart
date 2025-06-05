@@ -64,11 +64,10 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   getUserData() async {
-
-      List<StructureModel> listItem = await StructureController().getStructureWithArrondissement() ;
-      if(listItem.isNotEmpty){
+      StructureModel? item = await StructureController().getStructureDetails() ;
+      if(item != null){
         setState(() {
-          structure = listItem.first ;
+          structure = item;
           idArrond = structure!.arrondissement_id ;
         });
       }
@@ -90,7 +89,6 @@ class _UsersPageState extends State<UsersPage> {
   void initState() {
     super.initState();
     getUserData() ;
-
     if (kDebugMode) {
       print('homeweb') ;
       print(widget.idRole) ;

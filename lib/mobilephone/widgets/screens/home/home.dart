@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trash_app/shared/dialoguetoast.dart';
 
 
@@ -21,7 +22,7 @@ import '../structure/structure.dart';
 import '../violation/violation.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key,});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,11 +32,8 @@ class _HomePageState extends State<HomePage> {
 
   final TextEditingController _searchController = TextEditingController();
   bool showMenu = false;
-
   bool showUser = false;
-
-  UserModel? user;
-
+  UserModel user = UserModel(id: '', nom: "default", tel:'' , email: 'email', password: 'password', adresse: 'adresse', role: 'role', role_id: 1, arrondissement: 'arrondissement', arrondissement_id: 1);
 
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
@@ -58,12 +56,16 @@ class _HomePageState extends State<HomePage> {
 
   getUserData() async {
     UserModel? item = await UserController().getUserDetails();
-    setState(() {
-      user = item;
-      if (kDebugMode) {
-        print(user?.nom);
-      }
-    });
+
+    if(item!= null){
+      setState(() {
+        user = item;
+        if (kDebugMode) {
+          print(user.nom);
+        }
+      });
+    }
+
   }
 
 
@@ -196,8 +198,8 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomText(
-                  'Bienvenue !!   ',
-                  tex: 2.1,
+                   'Bienvenue ${user.nom} !!',
+                  tex: 1.7,
                   color: noir(),
                   family: 'Lobster',
                   fontWeight: FontWeight.w400,
@@ -206,8 +208,8 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.all(5.0),
                   child: SvgPicture.asset(
                     'assets/icons/emoji.svg',
-                    height: 35,
-                    width: 35,
+                    height: 33,
+                    width: 33,
                     semanticsLabel: 'Logo',
                   ),
                 ),
@@ -239,7 +241,7 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    cardMenu('Ma structure', 'structure.svg', StructurePage()),
+                    cardMenu('Ma structure', 'structure.svg', StructurePage(idArrond: user.arrondissement_id,)),
                     cardMenu('Violation', 'violation.svg', ViolationPage())
                   ],
                 ),
@@ -421,10 +423,8 @@ class _HomePageState extends State<HomePage> {
     TextEditingController usernameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
-    if (user != null) {
-      phoneController.text = user!.tel;
-      usernameController.text = user!.nom;
-    }
+    phoneController.text = user.tel;
+    usernameController.text = user.nom;
 
 
     InputDecoration inputDecorationUser(String label) {
@@ -634,7 +634,10 @@ class _HomePageState extends State<HomePage> {
                   showLoadingDialog(context) ;
 
                   bool res = await UserController().logout();
+                  final prefs = await SharedPreferences.getInstance();
                   if (res) {
+                    await prefs.setInt('idRole', 0);
+
                     DInfo.toastError("vous êtes deconnecté");
                     Navigator.pop(context, true);
                     Timer(Duration(milliseconds: 500), () {
