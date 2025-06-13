@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
           Timer(Duration(seconds: 1), () {
             DInfo.toastSuccess("Connection éffectué");
           });
-          Timer(Duration(seconds: 2), () {
+          Timer(Duration(seconds: 1), () {
             setState(() {
               isLoad = false;
             });

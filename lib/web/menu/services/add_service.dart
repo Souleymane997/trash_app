@@ -147,7 +147,6 @@ class _AddServiceState extends State<AddService> {
                   child: TextFormField(
                     textAlign: TextAlign.start,
                     controller: descController,
-                    maxLength: 3,
                     decoration: InputDecoration(
                       hintText: "description",
                       filled: true,

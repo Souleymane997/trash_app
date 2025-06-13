@@ -20,43 +20,54 @@ class _InfosPageState extends State<InfosPage> {
   final List<Map<String, String>> items = [
     {
       'title': 'Évitez de jeter les déchets par terre',
-      'description': 'Jeter ses déchets dans la rue ou la nature pollue l’environnement, bouche les caniveaux et crée des conditions insalubres. Utilisez toujours une poubelle, même pour les petits déchets comme les papiers ou les emballages.'
+      'description': 'Jeter ses déchets dans la rue ou la nature pollue l’environnement, bouche les caniveaux et crée des conditions insalubres. Utilisez toujours une poubelle, même pour les petits déchets comme les papiers ou les emballages.',
+      'path':'assets/images/clean3.png'
     },
     {
       'title': 'Faites le tri des déchets à la maison',
-      'description': 'Séparer les plastiques, papiers, verres et déchets organiques permet de faciliter le recyclage et de réduire la quantité de déchets envoyés en décharge. C’est un geste simple mais très efficace pour l’environnement.'
+      'description': 'Séparer les plastiques, papiers, verres et déchets organiques permet de faciliter le recyclage et de réduire la quantité de déchets envoyés en décharge. C’est un geste simple mais très efficace pour l’environnement.',
+      'path':'assets/images/clean.png'
+
     },
     {
       'title': 'Compostez vos déchets organiques',
-      'description': 'Les épluchures de fruits et légumes, les restes de repas ou les feuilles mortes peuvent être transformés en compost naturel. Cela réduit les ordures ménagères et permet d’enrichir le sol de façon écologique.'
+      'description': 'Les épluchures de fruits et légumes, les restes de repas ou les feuilles mortes peuvent être transformés en compost naturel. Cela réduit les ordures ménagères et permet d’enrichir le sol de façon écologique.',
+      'path':'assets/images/clean2.png'
     },
     {
       'title': 'Réduisez les produits jetables',
-      'description': 'Privilégiez l’utilisation d’objets réutilisables comme les sacs en tissu, les gourdes ou les contenants alimentaires. Cela diminue les déchets plastiques qui mettent des siècles à se décomposer.'
+      'description': 'Privilégiez l’utilisation d’objets réutilisables comme les sacs en tissu, les gourdes ou les contenants alimentaires. Cela diminue les déchets plastiques qui mettent des siècles à se décomposer.',
+      'path':'assets/images/clean3.png'
     },
     {
       'title': 'Déposez les déchets dangereux dans des points de collecte',
-      'description': 'Les piles, batteries, huiles usées ou ampoules doivent être apportées dans des centres spécialisés. Leur mauvaise gestion peut entraîner une pollution grave des sols et de l’eau.'
+      'description': 'Les piles, batteries, huiles usées ou ampoules doivent être apportées dans des centres spécialisés. Leur mauvaise gestion peut entraîner une pollution grave des sols et de l’eau.',
+      'path':'assets/images/clean.png'
     },
     {
       'title': 'Participez aux nettoyages communautaires',
-      'description': 'S’impliquer dans des opérations de nettoyage de quartier renforce le lien social, améliore l’environnement local et sensibilise toute la communauté à la propreté.'
+      'description': 'S’impliquer dans des opérations de nettoyage de quartier renforce le lien social, améliore l’environnement local et sensibilise toute la communauté à la propreté.',
+      'path':'assets/images/clean3.png'
     },
     {
       'title': 'Sensibilisez votre entourage',
-      'description': 'Parlez autour de vous des bonnes pratiques de gestion des déchets et de l’importance de garder son environnement propre. Le changement commence avec chacun de nous.'
+      'description': 'Parlez autour de vous des bonnes pratiques de gestion des déchets et de l’importance de garder son environnement propre. Le changement commence avec chacun de nous.',
+      'path':'assets/images/clean2.png'
     },
     {
       'title': 'Ne brûlez jamais vos ordures',
-      'description': 'La combustion à l’air libre libère des substances toxiques dangereuses pour la santé et pollue gravement l’air. Utilisez les circuits de collecte officiels.'
+      'description': 'La combustion à l’air libre libère des substances toxiques dangereuses pour la santé et pollue gravement l’air. Utilisez les circuits de collecte officiels.',
+    'path':'assets/images/clean.png'
     },
     {
       'title': 'Signalez les décharges sauvages',
-      'description': 'Prévenez les autorités locales en cas de dépôts illégaux d’ordures. Cela permet de réagir rapidement pour limiter les nuisances et faire respecter la loi.'
+      'description': 'Prévenez les autorités locales en cas de dépôts illégaux d’ordures. Cela permet de réagir rapidement pour limiter les nuisances et faire respecter la loi.',
+      'path':'assets/images/clean2.png'
     },
     {
       'title': 'Gardez les caniveaux et rivières propres',
-      'description': 'Les ordures jetées dans les caniveaux et rivières causent des inondations et propagent des maladies. Jeter les déchets au bon endroit protège toute la communauté.'
+      'description': 'Les ordures jetées dans les caniveaux et rivières causent des inondations et propagent des maladies. Jeter les déchets au bon endroit protège toute la communauté.',
+      'path':'assets/images/clean3.png'
     },
   ];
 
@@ -133,7 +144,7 @@ class _InfosPageState extends State<InfosPage> {
                                   topRight: Radius.circular(25),
                                 ),
                                 image: DecorationImage(
-                                  image: AssetImage("assets/images/img.png"),
+                                  image: AssetImage("${item['path']}"),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -177,12 +188,6 @@ class _InfosPageState extends State<InfosPage> {
                 },
               ),
             ),
-
-
-
-
-
-
 
 
           ],

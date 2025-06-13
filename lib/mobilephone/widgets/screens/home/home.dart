@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trash_app/shared/dialoguetoast.dart';
 
@@ -33,26 +34,9 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   bool showMenu = false;
   bool showUser = false;
-  UserModel user = UserModel(id: '', nom: "default", tel:'' , email: 'email', password: 'password', adresse: 'adresse', role: 'role', role_id: 1, arrondissement: 'arrondissement', arrondissement_id: 1);
+  UserModel user = UserModel(id: '', nom: "default", tel:'' , email: 'email', password: 'password', adresse: 'adresse', role: 'role', role_id: 1, arrondissement: 'arrondissement', arrondissement_id: 1 , secteur: "", secteur_id: 1);
 
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      prefixIcon: Icon(Icons.search),
-      filled: true,
-      hintStyle: TextStyle(color: grisLight()),
-      fillColor: blanc(),
-      contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: noir()),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: vert(), width: 2),
-      ),
-    );
-  }
+
 
   getUserData() async {
     UserModel? item = await UserController().getUserDetails();
@@ -217,19 +201,21 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.only(
-                left: 30.0, right: 30, top: 20, bottom: 20),
-            child: TextFormField(
-              controller: _searchController,
-              decoration: _inputDecoration("Rechercher une structure"),
-              keyboardType: TextInputType.text,
-              validator: (value) {
-                if (value == null || value.isEmpty) return '';
-                return null;
-              },
-            ),
-          ),
+          Gap(30),
+
+          // Padding(
+          //   padding: const EdgeInsets.only(
+          //       left: 30.0, right: 30, top: 20, bottom: 20),
+          //   child: TextFormField(
+          //     controller: _searchController,
+          //     decoration: _inputDecoration("Rechercher une structure"),
+          //     keyboardType: TextInputType.text,
+          //     validator: (value) {
+          //       if (value == null || value.isEmpty) return '';
+          //       return null;
+          //     },
+          //   ),
+          // ),
 
 
           isEmpty ? Column(
@@ -708,14 +694,14 @@ class _HomePageState extends State<HomePage> {
           color: blanc(),
           shape: RoundedRectangleBorder(
             side: BorderSide(
-              width: 1,
+              width: 0,
               strokeAlign: BorderSide.strokeAlignOutside,
             ),
             borderRadius: BorderRadius.circular(26),
           ),
           shadows: [
             BoxShadow(
-              color: noir(),
+              color: noir().withValues(alpha: 0.4),
               blurRadius: 4,
               offset: Offset(0, 4),
               spreadRadius: 0,

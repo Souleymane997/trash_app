@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:trash_app/shared/colors.dart';
 import 'package:trash_app/web/menu/notifications/notif.dart';
+import 'package:trash_app/web/menu/photos/photo.dart';
+import 'package:trash_app/web/menu/services/abonnement.dart';
 import 'package:trash_app/web/menu/services/services.dart';
 import 'package:trash_app/web/menu/structure/structure.dart';
 import 'package:trash_app/web/menu/users/admin.dart';
@@ -34,30 +36,28 @@ class _AccueilPageState extends State<AccueilPage> {
 
   getListPages() async {
 
-
-
-
     if(widget.idRole == 2){
-
-
 
       setState(() {
         pages = [
           UsersPage(idRole: widget.idRole,),
           NotifPage(),
           ServicesPages(),
+          Abonnement()
         ];
 
         titles = [
           'Dashbord',
           'Notifications',
           'Services',
+          'Abonnement',
         ];
 
         path = [
           'dash.svg',
           'notif.svg' ,
-          'setting.svg'
+          'setting.svg',
+          'abonne.svg'
         ];
       });
 
@@ -69,6 +69,7 @@ class _AccueilPageState extends State<AccueilPage> {
           pages = [
             UsersPage(idRole: widget.idRole,),
             StructuresPage(),
+            ViolationPhotoPage(),
             ArrondPage(),
             SecteurPage(),
           ];
@@ -76,6 +77,7 @@ class _AccueilPageState extends State<AccueilPage> {
           titles = [
             'Dashbord',
             'Structures',
+            'Violations',
             'Arrondissement',
             'Secteur',
           ];
@@ -83,6 +85,7 @@ class _AccueilPageState extends State<AccueilPage> {
           path = [
             'dash.svg',
             'structure.svg',
+            'violation.svg',
             'arrond.svg',
             'sect.svg',
           ];
@@ -92,6 +95,7 @@ class _AccueilPageState extends State<AccueilPage> {
             pages = [
               UsersPage(idRole: widget.idRole,),
               StructuresPage(),
+              ViolationPhotoPage(),
               ArrondPage(),
               SecteurPage(),
               RolePage(),
@@ -102,6 +106,7 @@ class _AccueilPageState extends State<AccueilPage> {
             titles = [
               'Dashbord',
               'Structures',
+              'Violations',
               'Arrondissement',
               'Secteur',
               'Role',
@@ -110,6 +115,7 @@ class _AccueilPageState extends State<AccueilPage> {
             path = [
               'dash.svg',
               'structure.svg',
+              'violation.svg',
               'arrond.svg',
               'sect.svg',
               'role.svg',

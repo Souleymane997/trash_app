@@ -108,16 +108,18 @@ class NotifController with ChangeNotifier {
 
 
   Future<bool> addNotif(NotifModel item) async {
+    final supabase = Supabase.instance.client;
+    final userId = supabase.auth.currentUser?.id;
 
     try {
       final response = await supabase.from('notifications').insert({
-      'user_id' : item.user_id,
+      'user_id' : userId,
       'structure_id' : item.structure_id ,
       'requete_id' : item.requete_id,
       'description' : item.description ,
-      'date_envoi' : item.date_envoi,
+      'date_envoi' : '${DateTime.now().day}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().year.toString().padLeft(2, '0')}',
       'type_notification' : item.type_notification,
-      'lecture' : item.lecture
+      'lecture' : false
       });
 
       if (kDebugMode) {

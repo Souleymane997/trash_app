@@ -20,7 +20,28 @@ class SecteurController with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await supabase.from('secteurs').select();
+      final response = await supabase.from('secteurs').select('id, secteur, arrondissements (id, arrondissement)');
+
+      _listSecteurs = (response as List)
+          .map((e) => SecteurModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      log("Premier Secteurs : ${_listSecteurs.last.secteur}");
+    } catch (e) {
+      debugPrint("Erreur lors du chargement des Secteurs : $e");
+    }
+
+    loading = false;
+    notifyListeners();
+    return _listSecteurs;
+  }
+
+  Future<List<SecteurModel>> getListSecteurWithArrondissement(int idArrond) async {
+    loading = true;
+    notifyListeners();
+
+    try {
+      final response = await supabase.from('secteurs').select().eq('arrondissement_id', idArrond);
 
       _listSecteurs = (response as List)
           .map((e) => SecteurModel.fromJson(e as Map<String, dynamic>))

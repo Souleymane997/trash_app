@@ -45,7 +45,7 @@ class UserController with ChangeNotifier {
       if(idArrond != null){
         final response = await Supabase.instance.client
             .from('users')
-            .select('id, nom,tel,email,password,adresse,role(id,role),arrondissements(id, arrondissement)').eq('arrondissement_id', idArrond).eq('role_id', 1);
+            .select('id, nom,tel,email,password,adresse,role(id,role),secteurs(id,secteur),arrondissements(id, arrondissement)').eq('arrondissement_id', idArrond).eq('role_id', 1);
 
         for (var item in response) {
           users.add(UserModel.fromJson(item));
@@ -56,15 +56,12 @@ class UserController with ChangeNotifier {
 
         final response = await Supabase.instance.client
             .from('users')
-            .select('id, nom,tel,email,password,adresse,role(id,role),arrondissements(id, arrondissement)').eq('role_id', 1);
+            .select('id, nom,tel,email,password,adresse,role(id,role),secteurs(id,secteur),arrondissements(id, arrondissement)').eq('role_id', 1);
 
         for (var item in response) {
           users.add(UserModel.fromJson(item));
         }
-
-
       }
-
 
     } catch (e) {
       debugPrint("Erreur chargement des users : $e");
@@ -79,7 +76,7 @@ class UserController with ChangeNotifier {
     try {
       final response = await Supabase.instance.client
           .from('users')
-          .select('id, nom,tel,email,password,adresse,role(id,role),arrondissements(id, arrondissement)').eq('role_id', 3);
+          .select('id, nom,tel,email,password,adresse,role(id,role),secteurs(id,secteur),arrondissements(id, arrondissement)').eq('role_id', 3);
 
       for (var item in response) {
         users.add(UserModel.fromJson(item));
@@ -122,6 +119,7 @@ class UserController with ChangeNotifier {
         'password': item.password,
         'adresse': item.adresse,
         'role_id': item.role_id,
+        'secteur_id':item.secteur_id,
         'arrondissement_id': item.arrondissement_id,
       });
 
@@ -197,7 +195,7 @@ class UserController with ChangeNotifier {
     }
     final data = await supabase
         .from('users')
-        .select('id, nom,tel,email,password,adresse,role(id,role),arrondissements(id, arrondissement)')
+        .select('id, nom,tel,email,password,adresse,role(id,role),secteurs(id,secteur),arrondissements(id, arrondissement)')
         .eq('id', userId) ;
 
     _list = (data as List)
@@ -212,38 +210,6 @@ class UserController with ChangeNotifier {
     return _list.first ;
   }
 
-
-
-
-
-
-
-
-  Future<bool> addUsers(UserModel item) async {
-    try {
-      final response = await supabase.from('users').insert({
-        'nom': item.nom,
-        'tel': item.tel,
-        'email': item.email,
-        'password': item.password,
-        'adresse': item.adresse,
-        'role_id': item.role_id,
-        'arrondissement_id': item.arrondissement_id,
-      });
-
-      if (kDebugMode) {
-        print('users crée : $response');
-      }
-      notifyListeners();
-      return true;
-
-    } catch (e) {
-      if (kDebugMode) {
-        print('Erreur lors de la creation: $e');
-      }
-      return false;
-    }
-  }
 
 
 

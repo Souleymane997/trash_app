@@ -10,6 +10,8 @@ class UserModel {
   late String adresse;
   late int role_id;
   late String role ;
+  late int secteur_id;
+  late String secteur;
   late int arrondissement_id;
   late String arrondissement;
 
@@ -22,6 +24,8 @@ class UserModel {
         required this.adresse,
         required this.role,
         required this.role_id,
+        required this.secteur_id,
+        required this.secteur,
         required this.arrondissement,
         required this.arrondissement_id
       });
@@ -36,6 +40,8 @@ class UserModel {
         adresse : json['adresse'],
         role : json['role']['role'],
         role_id : json['role']['id'],
+        secteur : json['secteurs']['secteur'],
+        secteur_id : json['secteurs']['id'],
         arrondissement_id: json['arrondissements']['id'],
         arrondissement: json['arrondissements']['arrondissement'],
     );

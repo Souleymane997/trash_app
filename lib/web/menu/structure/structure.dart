@@ -160,6 +160,7 @@ class _StructuresPageState extends State<StructuresPage> {
     ));
   }
 
+
  Widget gridView(List<StructureModel> listStructure){
 
    return LayoutBuilder(

@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:async';
 
@@ -8,8 +8,10 @@ import 'package:gap/gap.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:trash_app/controllers/notif_controller.dart';
+import 'package:trash_app/controllers/requete_controller.dart';
 import 'package:trash_app/models/notif_model.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:trash_app/models/requete.dart';
 
 import '../../../shared/colors.dart';
 import '../../../shared/custom_text.dart';
@@ -50,6 +52,131 @@ class _NotifPageState extends State<NotifPage> {
     super.initState();
     getList() ;
   }
+
+
+
+  actionDialog(BuildContext context, int idRequete, String statut) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Effectuer une action ..'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            (statut=="En attente") ? Container(
+              padding: const EdgeInsets.all(10.0),
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 5,
+                  backgroundColor: vert()
+                ),
+                onPressed: () async {
+                  bool res = await RequeteController().agreeRequete(idRequete) ;
+                  if (res) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Requete acceptée') , backgroundColor: vert(),),
+                    );
+                    getList() ;
+                    Timer(Duration(seconds: 2), () {
+                      Navigator.pop(context);
+                    });
+                  }
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Erreur') , backgroundColor: red(),),
+                    );
+                    Navigator.pop(context);
+                  }
+
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: CustomText('Acceptée la requête'),
+                ),
+              ),
+            ): Container(),
+
+            (statut=="En attente") ?Container(
+              padding: const EdgeInsets.all(10.0),
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 5,
+                    backgroundColor: red()
+                ),
+                onPressed: () async{
+                  bool res = await RequeteController().refuserRequete(idRequete) ;
+                  if (res) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Requete refusée') , backgroundColor: vert(),),
+                    );
+                    getList() ;
+                    Timer(Duration(seconds: 2), () {
+                      Navigator.pop(context);
+                    });
+                  }
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Erreur') , backgroundColor: red(),),
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: CustomText('Refuser la requête'),
+                ),
+              ),
+            ): Container(),
+
+            (statut=="Acceptee")? Container(
+              padding: const EdgeInsets.all(10.0),
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 5,
+                    backgroundColor: vertLight()
+                ),
+                onPressed: () async{
+                  bool res = await RequeteController().cloturerRequete(idRequete) ;
+                  if (res) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Requete cloturée') , backgroundColor: vert(),),
+                    );
+                    getList() ;
+                    Timer(Duration(seconds: 2), () {
+                      Navigator.pop(context);
+                    });
+                  }
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Erreur') , backgroundColor: red(),),
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: CustomText('Cloturer la requête'),
+                ),
+              ),
+            ):Container(),
+
+            (statut=="Cloturer")? CustomText("cette requête a été cloturée",color: noir(),) : Container()
+
+          ],
+        ),
+        actions: [
+
+        ],
+      ),
+    );
+  }
+
+
+
+
 
 
 
@@ -157,18 +284,10 @@ class _NotifPageState extends State<NotifPage> {
               bool lu = item.lecture ;
               return  GestureDetector(
                 onTap: () async {
-                  bool res = await NotifController().lecture(id: item.notification_id, lu: true) ;
-                  if(res){
-                    setState(() {
-                      lu = true ;
-                    });
-                    showToast("Marqué comme lu",
-                      duration: Duration(seconds: 1),
-                      position: ToastPosition.bottom,
-                    );
+                  RequeteModel? req = await RequeteController().getRequete(item.requete_id) ;
+                  if(req != null){
+                    actionDialog(context , item.requete_id, req.statut) ;
                   }
-                  getList() ;
-
                 },
                 child: SizedBox(
                   width: double.infinity,
@@ -183,25 +302,54 @@ class _NotifPageState extends State<NotifPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: IconButton(icon: Icon(Icons.delete, color: red(),),
-                              onPressed: () async {
-                                bool res = await NotifController().delete(item.notification_id) ;
-                                if(res){
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Notification supprimé') , backgroundColor: vert(),),
-                                  );
 
-                                  getList() ;
-                                }
-                                else{
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Erreur') , backgroundColor: red(),),
-                                  );
-                                }
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: IconButton(icon: Icon(Icons.remove_red_eye, color: lu? noir():red(),),
+                                  onPressed: () async {
+                                    bool res = await NotifController().lecture(id: item.notification_id, lu: true) ;
+                                    if(res){
+                                      setState(() {
+                                        lu = true ;
+                                      });
+                                      showToast("Marqué comme lu",
+                                        duration: Duration(seconds: 1),
+                                        position: ToastPosition.bottom,
+                                      );
+                                      getList() ;
+                                    }
+                                    else{
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Erreur') , backgroundColor: red(),),
+                                      );
+                                    }
 
-                            },),
+                                  },),
+                              ),
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: IconButton(icon: Icon(Icons.delete, color: red(),),
+                                  onPressed: () async {
+                                    bool res = await NotifController().delete(item.notification_id) ;
+                                    if(res){
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Notification supprimé') , backgroundColor: vert(),),
+                                      );
+
+                                      getList() ;
+                                    }
+                                    else{
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Erreur') , backgroundColor: red(),),
+                                      );
+                                    }
+
+                                },),
+                              ),
+                            ],
                           ),
                           lu ?
                           Padding(
@@ -223,7 +371,7 @@ class _NotifPageState extends State<NotifPage> {
                           ),
                           Text(item.type_notification, style:TextStyle(fontSize: 20 , fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
                           Text(
-                            '${item.description}\n\n${item.date_envoi}\n', textAlign: TextAlign.center,
+                            '${item.description}\n', textAlign: TextAlign.center,
                             style:TextStyle(fontSize: 13),
                           ),
 

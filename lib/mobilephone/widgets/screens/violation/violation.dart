@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:banner_carousel/banner_carousel.dart';
+import 'package:trash_app/mobilephone/widgets/screens/violation/formulaire.dart';
+import 'package:trash_app/mobilephone/widgets/screens/violation/sendphoto.dart';
 
 import '../../../../shared/colors.dart';
 import '../../../../shared/custom_text.dart';
 import '../../../../shared/slidepage.dart';
-import 'violationsend.dart';
 
 class ViolationPage extends StatefulWidget {
   const ViolationPage({super.key});
@@ -15,28 +17,13 @@ class ViolationPage extends StatefulWidget {
 
 class _ViolationPageState extends State<ViolationPage> {
 
-  final _violationController = TextEditingController();
-  final _lieuController = TextEditingController();
-  final _dateController = TextEditingController();
-
-
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      filled: true,
-      hintStyle: TextStyle(color: grisLight()),
-      fillColor: blanc(),
-      contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: vert()),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: vert(), width: 2),
-      ),
-    );
-  }
+  List<BannerModel> listBanners = [
+    BannerModel( id: "1", imagePath: 'assets/images/viol.png'),
+    BannerModel( id: "2", imagePath: 'assets/images/viol2.png'),
+    BannerModel( id: "3", imagePath: 'assets/images/clean2.png'),
+    BannerModel( id: "4", imagePath: 'assets/images/clean3.png'),
+    BannerModel( id: "5", imagePath: 'assets/images/default.png'),
+  ];
 
 
   @override
@@ -75,113 +62,45 @@ class _ViolationPageState extends State<ViolationPage> {
                 fontWeight: FontWeight.w700,
               ),
             ),
+            SizedBox(height: 10,),
+            BannerCarousel(
+              banners: listBanners,
+              customizedIndicators: IndicatorModel.animation(width: 20, height: 5, spaceBetween: 2, widthAnimation: 50),
+              height: 150,
+              width: double.infinity,
+              activeColor: Colors.amberAccent,
+              disableColor: Colors.white,
+              animation: true,
+              borderRadius: 10,
+              indicatorBottom: false,
+            ),
+            SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
                 width: 334,
                 child: CustomText(
-                    "Si vous êtes témoin d' une violation, nous vous encourageons à la signaler immédiatement. Votre signalement permet de maintenir un environnement sûr et respectueux pour tous. Veuillez fournir autant de détails que possible, notamment la nature de la violation, les personnes impliquées, ainsi que la date, l'heure et le lieu de l'incident. ",
+                  "Si vous êtes témoin d' une violation, nous vous encourageons à la signaler immédiatement. Votre signalement permet de maintenir un environnement sûr et respectueux pour tous. Veuillez fournir autant de détails que possible, notamment la nature de la violation, les personnes impliquées, ainsi que la date, l'heure et le lieu de l'incident. ",
                   color: noir(),
-                  tex: TailleText(context).contenu,
+                  tex: TailleText(context).contenu * 1.15,
                   textAlign: TextAlign.center,
                   family: 'Poppins',
                   fontWeight: FontWeight.w300,
                 ),
               ),
             ),
-
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: CustomText(
-                    'Formulaire de Signalement',
-                    color: noir(),
-                    textAlign: TextAlign.left,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Row(
-                children: [
-                  CustomText(
-                    'Nature de la violation',
-                    tex: TailleText(context).contenu,
-                    color: noir(),
-                    fontWeight: FontWeight.w300,
-                  ),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: TextFormField(
-                controller: _violationController,
-                maxLines: 4,
-                decoration: _inputDecoration(""),
-                keyboardType:TextInputType.text,
-                validator: (value) {
-                  if (value == null || value.isEmpty) return 'violation requis';
-                  return null;
-                },
-              ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    child: TextFormField(
-                      controller: _lieuController,
-                      decoration: _inputDecoration("Lieu"),
-                      keyboardType:TextInputType.text,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return 'lieu requis';
-                        return null;
-                      },
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    child: TextFormField(
-                      controller: _dateController,
-                      decoration: _inputDecoration("date"),
-                      keyboardType:TextInputType.text,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return 'date requis';
-                        return null;
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-
+            SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: ElevatedButton(
                 onPressed: (){
-
-                  Navigator.pushReplacement(
+                  Navigator.push(
                       context,
                       SlideRightRoute(
-                          child: ViolationSendPage(),
-                          page: ViolationSendPage(),
+                          child: FormulairePage(),
+                          page: FormulairePage(),
                           direction: AxisDirection.left)
                   );
-
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: vert(),
@@ -192,7 +111,7 @@ class _ViolationPageState extends State<ViolationPage> {
                     side: BorderSide(color: vert(), width: 1),
                   ),
                 ),
-                child: CustomText("Soumettre", family: 'Inter', fontWeight: FontWeight.w500,),
+                child: CustomText("Formulaire de Violation ", family: 'Inter', fontWeight: FontWeight.w500,),
               ),
             ),
 
@@ -200,15 +119,13 @@ class _ViolationPageState extends State<ViolationPage> {
               padding: const EdgeInsets.all(10.0),
               child: ElevatedButton(
                 onPressed: (){
-
-                  Navigator.pushReplacement(
+                  Navigator.push(
                       context,
                       SlideRightRoute(
-                          child: ViolationSendPage(),
-                          page: ViolationSendPage(),
+                          child: SendPhoto(),
+                          page: SendPhoto(),
                           direction: AxisDirection.left)
                   );
-
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: vert(),

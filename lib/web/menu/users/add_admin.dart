@@ -61,9 +61,10 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
     int idArrond = selectedArrondissement?.id ?? 0 ;
 
-    UserModel item = UserModel(id: "1", nom: _usernameController.text, tel: _phoneController.text, email: _emailController.text, password: _passwordController.text, adresse: _adresseController.text, role: '', role_id:3, arrondissement:'', arrondissement_id: idArrond) ;
+    UserModel item = UserModel(id: "1", nom: _usernameController.text, tel: _phoneController.text, email: _emailController.text, password: _passwordController.text, adresse: _adresseController.text, role: '', role_id:3, arrondissement:'', arrondissement_id: idArrond , secteur: "",
+      secteur_id: 1) ;
 
-   bool res = await UserController().signUpUser(item: item , email: _emailController.text ,) ;
+    bool res = await UserController().signUpUser(item: item , email: _emailController.text ,) ;
 
     if (kDebugMode) {
       print(res.toString()) ;

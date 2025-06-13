@@ -32,3 +32,33 @@ class AbonnModel {
   }
 
 }
+
+
+
+class AbonnUserModel {
+  late int abonnement_id;
+  late String nom ;
+  late String tel ;
+  late String nom_service;
+  late bool actif;
+
+  AbonnUserModel(
+      { required this.abonnement_id,
+        required this.nom,
+        required this.nom_service,
+        required this.tel,
+        required this.actif
+      });
+
+  factory AbonnUserModel.fromJson(Map<String, dynamic> json) {
+    return AbonnUserModel(
+      abonnement_id: json['abonnement_id'],
+      nom: json['users']['nom'],
+      tel: json['users']['tel'],
+      nom_service: json['services']['nom_service'],
+      actif: json['actif'],
+    );
+  
+  }
+}
+

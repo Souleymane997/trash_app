@@ -2,108 +2,74 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:trash_app/controllers/user_controller.dart';
-import 'package:trash_app/models/users_model.dart';
-import 'package:trash_app/web/menu/components/content_view.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
-import '../../../controllers/structures_controller.dart';
-import '../../../models/structure_model.dart';
+import '../../../controllers/abonnement.dart';
+import '../../../models/abonn_model.dart';
 import '../../../shared/colors.dart';
 import '../../../shared/custom_text.dart';
+import '../components/content_view.dart';
 import '../components/page_header.dart';
 import '../components/summary_card.dart';
 
-class UsersPage extends StatefulWidget {
-  const UsersPage({super.key, required this.idRole});
-  final int idRole ;
+class Abonnement extends StatefulWidget {
+  const Abonnement({super.key});
 
   @override
-  State<UsersPage> createState() => _UsersPageState();
+  State<Abonnement> createState() => _AbonnementState();
 }
 
-class _UsersPageState extends State<UsersPage> {
+class _AbonnementState extends State<Abonnement> {
 
-  late List<UserModel> list = [];
-  late List<StructureModel> listStructure = [];
   bool isLoad = false ;
+  late List<AbonnUserModel> list = [];
   int nbre = 0 ;
   int nbreStructure = 0 ;
-  StructureModel? structure ;
-  int idArrond = 0 ;
+  String idStructure = '' ;
 
-  getList({int? idArrond}) async {
-    List<UserModel> listUsers = await UserController().getUserWithArrondissement(idArrond: idArrond);
-    setState(() {
-      list = listUsers ;
-    });
-    Timer(Duration(seconds: 2), () {
+  getListAbonn({int? idArrond}) async {
+    List<AbonnUserModel?> listUsers = await AbonnementController().getAllAbonn();
+
+    if (listUsers.isNotEmpty) {
       setState(() {
-        isLoad = true ;
-        nbre = list.length ;
+          list = listUsers.whereType<AbonnUserModel>().toList();
       });
-    });
-
-
-    List<StructureModel> lists = await  StructureController().getStructureWithArrondissement();
-    setState(() {
-      listStructure= lists ;
-    });
-    Timer(Duration(seconds: 2), () {
-      setState(() {
-        isLoad = true ;
-        nbreStructure = listStructure.length ;
-      });
-    });
-  }
-
-  getUserData() async {
-      StructureModel? item = await StructureController().getStructureDetails() ;
-      if(item != null){
-        setState(() {
-          structure = item;
-          idArrond = structure!.arrondissement_id ;
-        });
-      }
-
       Timer(Duration(seconds: 2), () {
-        if(widget.idRole == 2){
-          getList(idArrond: structure?.arrondissement_id) ;
-        }else{
-          getList() ;
-        }
-
+        setState(() {
+          isLoad = true ;
+          nbre = list.length ;
+        });
       });
-
-
+    }else{
+      setState(() {
+        isLoad = true ;
+        nbre = 0 ;
+      });
+      return;
+        
+    }
   }
-
 
   @override
   void initState() {
     super.initState();
-    getUserData() ;
-    if (kDebugMode) {
-      print('homeweb') ;
-      print(widget.idRole) ;
-    }
+    getListAbonn() ;
+
   }
 
 
+  
+  
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveBreakpoints.of(context);
     var summaryCards = [
-      SummaryCard(title: "Nombre d'Utilisateurs ", value: '$nbre'),
-      (widget.idRole == 3 || widget.idRole == 4 )
-          ? SummaryCard(title: 'Nombre de Structure', value: '$nbreStructure')
-          : SizedBox.shrink(), // ou rien du tout avec ...[]
+      SummaryCard(title: "Nombre d'Abonnés ", value: '$nbre')
     ];
 
     return ContentView(
@@ -111,8 +77,8 @@ class _UsersPageState extends State<UsersPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const PageHeader(
-              title: 'Dashboard',
-              description: "Vue d'ensemble sur votre projet",
+              title: 'Abonnement',
+              description: "Mes Abonness",
             ),
             const Gap(16),
             if (responsive.isMobile)
@@ -142,7 +108,7 @@ class _UsersPageState extends State<UsersPage> {
 
 class _TableView extends StatelessWidget {
   const _TableView(this.listUsers);
-  final List<UserModel> listUsers ;
+  final List<AbonnUserModel> listUsers ;
 
   @override
   Widget build(BuildContext context) {
@@ -176,14 +142,14 @@ class _TableView extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: TableView.builder(
-        columnCount: 7,
+        columnCount: 5,
         rowCount:listUsers.length+1,
         pinnedRowCount: 1,
         pinnedColumnCount: 1,
         columnBuilder: (index) {
           return TableSpan(
             foregroundDecoration: index == 0 ? decoration : null,
-            extent: const FractionalTableSpanExtent(1 / 7),
+            extent: const FractionalTableSpanExtent(1 / 5),
           );
         },
         rowBuilder: (index) {
@@ -206,15 +172,12 @@ class _TableView extends StatelessWidget {
               case 1:
                 label = 'Nom';
               case 2:
-                label = 'Email';
-              case 3:
                 label = 'Telephone';
+              case 3:
+                label = 'Service';
               case 4:
-                label = 'Arrondissement';
-              case 5:
-                label = 'Secteur';
-              case 6:
-                label = 'Adresse';
+                label = 'Actif';
+              
             }
           } else {
             final user = listUsers[rowIndex-1];
@@ -224,15 +187,12 @@ class _TableView extends StatelessWidget {
               case 1:
                 label = user.nom.toString();
               case 2:
-                label = user.email.toString();
-              case 3:
                 label = user.tel.toString();
+              case 3:
+                label = user.nom_service.toString();
               case 4:
-                label = user.arrondissement.toString();
-              case 5:
-                label = user.secteur.toString();
-              case 6:
-                label = user.adresse.toString();
+                label =  (user.actif) ? 'oui' : 'non';
+              
             }
           }
           return TableViewCell(
@@ -260,4 +220,3 @@ class _TableView extends StatelessWidget {
     );
   }
 }
-

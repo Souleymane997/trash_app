@@ -22,6 +22,11 @@ class SecteurModel {
     );
   }
 
+  @override
+  String toString() {
+    return secteur;
+  }
+
 
 
 }
