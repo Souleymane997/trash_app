@@ -66,6 +66,7 @@ class _ViolationSendPageState extends State<ViolationSendPage> {
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         backgroundColor: vert(),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(

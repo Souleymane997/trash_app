@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:banner_carousel/banner_carousel.dart';
@@ -24,6 +26,27 @@ class _ViolationPageState extends State<ViolationPage> {
     BannerModel( id: "4", imagePath: 'assets/images/clean3.png'),
     BannerModel( id: "5", imagePath: 'assets/images/default.png'),
   ];
+
+  late PageController _pageController;
+  int _currentPage = 0;
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+
+    timer = Timer.periodic(Duration(seconds: 5), (_) {
+      if (_pageController.hasClients) {
+        _currentPage = (_currentPage + 1) % listBanners.length;
+        _pageController.animateToPage(
+          _currentPage,
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
 
 
   @override
@@ -65,14 +88,18 @@ class _ViolationPageState extends State<ViolationPage> {
             SizedBox(height: 10,),
             BannerCarousel(
               banners: listBanners,
-              customizedIndicators: IndicatorModel.animation(width: 20, height: 5, spaceBetween: 2, widthAnimation: 50),
+              customizedIndicators: IndicatorModel.animation(width: 20, height: 5, spaceBetween: 2, widthAnimation: 30,),
               height: 150,
               width: double.infinity,
-              activeColor: Colors.amberAccent,
+              activeColor: vertLight(),
               disableColor: Colors.white,
               animation: true,
               borderRadius: 10,
               indicatorBottom: false,
+              pageController: _pageController,
+              onPageChanged: (index) {
+                _currentPage = index;
+              },
             ),
             SizedBox(height: 10,),
             Padding(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:trash_app/controllers/photo_controller.dart';
 import 'package:trash_app/models/photo_model.dart';
@@ -55,7 +57,7 @@ class _FormulairePageState extends State<FormulairePage> {
       debugPrint("photo envoyé!");
       DInfo.toastSuccess('informations envoyé') ;
 
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           SlideRightRoute(
               child: ViolationSendPage(),
@@ -194,7 +196,12 @@ class _FormulairePageState extends State<FormulairePage> {
                 padding: const EdgeInsets.all(10.0),
                 child: ElevatedButton(
                   onPressed: (){
-                    submit() ;
+                    if(violationController.text.isNotEmpty && lieuController.text.isNotEmpty && selectedDate != null){
+                      submit() ;
+                    }
+                    else{
+                      DInfo.toastError("Remplissez tous les champs svp ?") ;
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: vert(),

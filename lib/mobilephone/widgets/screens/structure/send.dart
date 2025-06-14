@@ -99,6 +99,7 @@ class _SendPageState extends State<SendPage> {
           iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           backgroundColor: vert(),
+          automaticallyImplyLeading: false,
         ),
         body: Center(
           child: Column(

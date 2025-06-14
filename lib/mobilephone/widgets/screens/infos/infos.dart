@@ -119,7 +119,7 @@ class _InfosPageState extends State<InfosPage> {
                   enlargeCenterPage: true,
                   viewportFraction: 0.8,
                   autoPlayCurve: Curves.fastOutSlowIn,
-                  autoPlayAnimationDuration: Duration(milliseconds: 2000),
+                  autoPlayAnimationDuration: Duration(milliseconds: 5000),
                 ),
                 itemBuilder: (context, index, realIndex) {
                   final item = items[index];

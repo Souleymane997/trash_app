@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:trash_app/shared/colors.dart';
+import 'package:trash_app/web/menu/avis/avis.dart';
 import 'package:trash_app/web/menu/notifications/notif.dart';
 import 'package:trash_app/web/menu/photos/photo.dart';
+import 'package:trash_app/web/menu/programme/programme_day.dart';
 import 'package:trash_app/web/menu/services/abonnement.dart';
 import 'package:trash_app/web/menu/services/services.dart';
 import 'package:trash_app/web/menu/structure/structure.dart';
@@ -43,7 +45,9 @@ class _AccueilPageState extends State<AccueilPage> {
           UsersPage(idRole: widget.idRole,),
           NotifPage(),
           ServicesPages(),
-          Abonnement()
+          Abonnement(),
+          ProgrammeDay(),
+          AvisPage()
         ];
 
         titles = [
@@ -51,13 +55,17 @@ class _AccueilPageState extends State<AccueilPage> {
           'Notifications',
           'Services',
           'Abonnement',
+          'Programmes',
+          'Avis'
         ];
 
         path = [
           'dash.svg',
           'notif.svg' ,
           'setting.svg',
-          'abonne.svg'
+          'abonne.svg',
+          'calendar.svg',
+          'emoji.svg'
         ];
       });
 

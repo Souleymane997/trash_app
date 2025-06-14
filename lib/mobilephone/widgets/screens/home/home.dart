@@ -4,11 +4,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trash_app/shared/dialoguetoast.dart';
+import 'package:trash_app/mobilephone/widgets/screens/home/app_infos.dart';
+import 'package:trash_app/mobilephone/widgets/screens/home/user_infos.dart';
+
 
 
 import '../../../../controllers/user_controller.dart';
@@ -16,7 +16,6 @@ import '../../../../models/users_model.dart';
 import '../../../../shared/colors.dart';
 import '../../../../shared/custom_text.dart';
 import '../../../../shared/slidepage.dart';
-import '../../sign/login.dart';
 import '../calendar/calendar.dart';
 import '../infos/infos.dart';
 import '../structure/structure.dart';
@@ -31,7 +30,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  final TextEditingController _searchController = TextEditingController();
   bool showMenu = false;
   bool showUser = false;
   UserModel user = UserModel(id: '', nom: "default", tel:'' , email: 'email', password: 'password', adresse: 'adresse', role: 'role', role_id: 1, arrondissement: 'arrondissement', arrondissement_id: 1 , secteur: "", secteur_id: 1);
@@ -52,129 +50,139 @@ class _HomePageState extends State<HomePage> {
 
   }
 
+  Future<void> openUserBottomSheet() async {
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: grisLight(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child:  UserInfos(user: user,),
+      ),
+    );
+  }
+
+  Future<void> openAppInfosBottomSheet() async {
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: grisLight(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child:  AppInfos(),
+      ),
+    );
+  }
+
+
 
   @override
   void initState() {
     super.initState();
     getUserData();
-    _searchController.addListener(() {
-      setState(() {});
-    });
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    final isEmpty = _searchController.text
-        .trim()
-        .isEmpty;
-
 
     return Scaffold(
       backgroundColor: grisLight(),
       body: Stack(
           children: [
-            homeContain(isEmpty),
-            showUser ? Center(
-                child: userPage()
-            ) : Container(),
-            showMenu ? Center(
-                child: menuPage()
-            ) : Container(),
+            homeContain(),
           ]
       ),
     );
   }
 
 
-  Widget homeContain(bool isEmpty) {
+  Widget homeContain() {
     return SingleChildScrollView(
       child: Column(
         children: [
-          Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.325,
-                decoration: ShapeDecoration(
-                  color: const Color(0xFF009C7B),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(50),
-                      bottomRight: Radius.circular(50),
-                    ),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.04,),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                showMenu = !showMenu;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: SvgPicture.asset(
-                                'assets/icons/Menu.svg',
-                                height: 35,
-                                width: 35,
-                                semanticsLabel: 'Logo',
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                showUser = !showUser;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: SvgPicture.asset(
-                                'assets/icons/person.svg',
-                                height: 35,
-                                width: 35,
-                                semanticsLabel: 'person',
-                              ),
-                            ),
-                          ),
-                        ],),
-                    ),
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: AssetImage('assets/logos/logo1.png'),
-                    ),
-                    CustomText(
-                      'Trash Track',
-                      tex: 2.1,
-                      textAlign: TextAlign.center,
-                      family: 'Lobster',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ],
+          Container(
+            width: double.infinity,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height * 0.325,
+            decoration: ShapeDecoration(
+              color: const Color(0xFF009C7B),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(50),
+                  bottomRight: Radius.circular(50),
                 ),
               ),
-            ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.04,),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          openAppInfosBottomSheet() ;
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/Menu.svg',
+                            height: 35,
+                            width: 35,
+                            semanticsLabel: 'Logo',
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          openUserBottomSheet() ;
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/person.svg',
+                            height: 35,
+                            width: 35,
+                            semanticsLabel: 'person',
+                          ),
+                        ),
+                      ),
+                    ],),
+                ),
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: AssetImage('assets/logos/logo1.png'),
+                ),
+                CustomText(
+                  'Trash Track',
+                  tex: 2.1,
+                  textAlign: TextAlign.center,
+                  family: 'Lobster',
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
@@ -202,23 +210,7 @@ class _HomePageState extends State<HomePage> {
           ),
 
           Gap(30),
-
-          // Padding(
-          //   padding: const EdgeInsets.only(
-          //       left: 30.0, right: 30, top: 20, bottom: 20),
-          //   child: TextFormField(
-          //     controller: _searchController,
-          //     decoration: _inputDecoration("Rechercher une structure"),
-          //     keyboardType: TextInputType.text,
-          //     validator: (value) {
-          //       if (value == null || value.isEmpty) return '';
-          //       return null;
-          //     },
-          //   ),
-          // ),
-
-
-          isEmpty ? Column(
+          Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -238,443 +230,18 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    cardMenu('Calendrier', 'calendar.svg', CalendarPage()),
+                    cardMenu('Calendrier', 'calendar.svg', CalendarPage(idArrond: user.arrondissement_id,)),
                     cardMenu('Informations', 'infos.svg', InfosPage())
                   ],
                 ),
               ),
-            ],) :
+            ],)
 
-          Container(
-            width: MediaQuery
-                .of(context)
-                .size
-                .width * 0.9,
-            height: 80,
-            decoration: ShapeDecoration(
-              color: blanc(),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  width: 1,
-                  strokeAlign: BorderSide.strokeAlignOutside,
-                ),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              shadows: [
-                BoxShadow(
-                  color: Color(0xFF000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                  spreadRadius: 0,
-                )
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(width: 5,),
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: CustomText(
-                          'WendPanga Clean ',
-                          color: noir(),
-                          tex: TailleText(context).titre,
-                          textAlign: TextAlign.center,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      CustomText(
-                        'Ouagadougou , Zone 1',
-                        color: noir(),
-                        textAlign: TextAlign.center,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 39,
-                  height: 39,
-                  decoration: ShapeDecoration(
-                    color: vert(),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(15),
-                        bottomLeft: Radius.circular(5),
-                      ),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/reload.svg',
-                      height: 50,
-                      width: 50,
-                      semanticsLabel: 'Logo',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+
         ],
       ),
     );
   }
-
-
-  Widget menuPage() {
-    return Center(
-      child: Container(
-        decoration: ShapeDecoration(
-          color: noir().withValues(alpha: 0.8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-        ),
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * 0.85,
-        height: MediaQuery
-            .of(context)
-            .size
-            .height * 0.85,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      showMenu = false;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/exit.svg',
-                      height: 30,
-                      width: 30,
-                      semanticsLabel: 'person',
-                    ),
-                  ),
-                ),
-              ],),
-            CircleAvatar(
-              radius: 45,
-              backgroundImage: AssetImage('assets/logos/logo1.png'),
-            ),
-            CustomText(
-              'Trash Track',
-              tex: 2.0,
-              textAlign: TextAlign.center,
-              family: 'Lobster',
-              fontWeight: FontWeight.w400,
-            ),
-            SizedBox(height: 20,),
-
-            CustomText(
-              'Trash Track est une solution innovante dédiée à la gestion du ramassage des ordures dans les arrondissements de Ouagadougou. \n\nGrâce à une plateforme intelligente, Trash Track optimise les tournées de collecte, assure un suivi en temps réel et améliore la propreté urbaine. \n\n',
-            ),
-            CustomText(
-                'Trash Track vise à rendre la ville plus propre, plus saine et plus agréable pour tous.'),
-            Spacer(),
-
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: CustomText(
-                'Contactez-nous \n Téléphone : +226 70 00 00 00 \nEmail : contact@trashtrack.bf\n Adresse : Ouagadougou, Burkina Faso',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-
-
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget userPage() {
-    TextEditingController phoneController = TextEditingController();
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-
-    phoneController.text = user.tel;
-    usernameController.text = user.nom;
-
-
-    InputDecoration inputDecorationUser(String label) {
-      return InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: noir()),
-        filled: true,
-        hintStyle: TextStyle(color: blanc()),
-        fillColor: vert(),
-        contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: vert()),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: vert(), width: 2),
-        ),
-      );
-    }
-
-
-    return Center(
-      child: Container(
-        decoration: ShapeDecoration(
-          color: noir().withValues(alpha: 0.8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-        ),
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * 0.85,
-        height: MediaQuery
-            .of(context)
-            .size
-            .height * 0.85,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      showUser = false;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/exit.svg',
-                      height: 30,
-                      width: 30,
-                      semanticsLabel: 'person',
-                    ),
-                  ),
-                ),
-              ],),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: SvgPicture.asset(
-                'assets/icons/person.svg',
-                height: 100,
-                width: 100,
-                semanticsLabel: 'person',
-              ),
-            ),
-            SizedBox(height: 20,),
-            Padding(
-              padding: EdgeInsets.only(left: MediaQuery
-                  .of(context)
-                  .size
-                  .width * 0.07,),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/user.svg',
-                      height: 15,
-                      width: 15,
-                      semanticsLabel: 'person',
-                    ),
-                  ),
-                  CustomText("Nom & Prenom"),
-
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: SizedBox(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.7,
-                child: TextFormField(
-                  controller: usernameController,
-                  readOnly: true,
-                  decoration: inputDecorationUser(""),
-                  keyboardType: TextInputType.text,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return 'lieu requis';
-                    return null;
-                  },
-                ),
-              ),
-            ),
-
-            SizedBox(height: 20,),
-            Padding(
-              padding: EdgeInsets.only(left: MediaQuery
-                  .of(context)
-                  .size
-                  .width * 0.07,),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/pass.svg',
-                      height: 15,
-                      width: 15,
-                      semanticsLabel: 'person',
-                    ),
-                  ),
-                  CustomText("Mot de passe"),
-
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: SizedBox(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.7,
-                child: TextFormField(
-                  controller: passwordController,
-                  readOnly: true,
-                  decoration: inputDecorationUser("*************"),
-                  keyboardType: TextInputType.text,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return 'pass requis';
-                    return null;
-                  },
-                ),
-              ),
-            ),
-
-            SizedBox(height: 20,),
-            Padding(
-              padding: EdgeInsets.only(left: MediaQuery
-                  .of(context)
-                  .size
-                  .width * 0.07,),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/phone.svg',
-                      height: 15,
-                      width: 15,
-                      semanticsLabel: 'person',
-                    ),
-                  ),
-                  CustomText("Telephone"),
-
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: SizedBox(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.7,
-                child: TextFormField(
-                  controller: phoneController,
-                  readOnly: true,
-                  decoration: inputDecorationUser(""),
-                  keyboardType: TextInputType.text,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'telephone requis';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-            ),
-            Spacer(),
-            Container(
-              padding: const EdgeInsets.all(10.0),
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width * 0.65,
-              child: ElevatedButton(
-                onPressed: () async {
-                  showLoadingDialog(context) ;
-
-                  bool res = await UserController().logout();
-                  final prefs = await SharedPreferences.getInstance();
-                  if (res) {
-                    await prefs.setInt('idRole', 0);
-
-                    DInfo.toastError("vous êtes deconnecté");
-                    Navigator.pop(context, true);
-                    Timer(Duration(milliseconds: 500), () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (
-                            context) => const LoginPage()),
-                            (Route<dynamic> route) => false,
-                      );
-                    });
-                  } else {
-                    Navigator.pop(context, true);
-                    DInfo.toastError("erreur");
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: redFonce(),
-                  foregroundColor: blanc(),
-                  padding: EdgeInsets.symmetric(horizontal: 45, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: redFonce(), width: 1),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomText("Deconnexion", family: 'Inter',
-                      fontWeight: FontWeight.w500,),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/logout.svg',
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.05,
-                        width: 20,
-                        semanticsLabel: 'person',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(height: 10,)
-          ],
-        ),
-      ),
-    );
-  }
-
 
   Widget cardMenu(String title, String path, Widget x) {
     return InkWell(
@@ -730,25 +297,6 @@ class _HomePageState extends State<HomePage> {
 
           ],),
       ),
-    );
-  }
-
-  void showLoadingDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return  AlertDialog(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          content: Center(
-            child: SpinKitCircle(
-              color: vert(),
-              size: 50.0,
-            ),
-          ),
-        );
-      },
     );
   }
 

@@ -346,7 +346,6 @@ class _StructurePageState extends State<StructurePage> {
                                       ),
                                     );
 
-
                                   }else{
                                     DInfo.toastError('selectionner la date svp ?') ;
                                   }
@@ -398,8 +397,8 @@ class _StructurePageState extends State<StructurePage> {
                     Navigator.pushReplacement(
                       context,
                       SlideRightRoute(
-                        child: FeedbackPage(),
-                        page: FeedbackPage(),
+                        child: FeedbackPage(idStructure: idStructure,),
+                        page: FeedbackPage(idStructure: idStructure,),
                         direction: AxisDirection.left,
                       ),
                     );
