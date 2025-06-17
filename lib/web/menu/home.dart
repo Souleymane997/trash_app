@@ -220,32 +220,42 @@ class _AccueilPageState extends State<AccueilPage> {
       body: Row(
         children: [
           if (!isMobile)
-            NavigationRail(
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: _onDestinationSelected,
-              labelType: NavigationRailLabelType.all,
-              destinations: [
-                for (int i = 0; i < pages.length; i++)
-                  NavigationRailDestination(
-                    icon: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/${path[i]}',
-                        height: size,
-                        width: size,
-                        color:noir(),
-                        semanticsLabel: path[i],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: NavigationRail(
+                        selectedIndex: _selectedIndex,
+                        onDestinationSelected: _onDestinationSelected,
+                        labelType: NavigationRailLabelType.all,
+                        destinations: [
+                          for (int i = 0; i < pages.length; i++)
+                            NavigationRailDestination(
+                              icon: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                child: SvgPicture.asset(
+                                  'assets/icons/${path[i]}',
+                                  height: size,
+                                  width: size,
+                                  color: noir(),
+                                  semanticsLabel: path[i],
+                                ),
+                              ),
+                              label: Text(titles[i]),
+                            ),
+                        ],
                       ),
                     ),
-                    label: Text(titles[i]),
                   ),
-              ],
+                );
+              },
             ),
           const VerticalDivider(width: 1),
           Expanded(child:  pages[_selectedIndex]) ,
-        ],
-      ),
-
+            ]
+            ),
     );
   }
 }
