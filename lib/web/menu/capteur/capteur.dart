@@ -8,43 +8,43 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:responsive_framework/responsive_framework.dart' show ResponsiveBreakpoints;
+import 'package:trash_app/controllers/capteur_controller.dart';
+import 'package:trash_app/models/capteur_model.dart';
 
-import '../../../controllers/avis_controller.dart';
-import '../../../models/avis_model.dart';
+
 import '../../../shared/colors.dart';
 import '../../../shared/custom_text.dart';
 import '../components/content_view.dart';
 import '../components/page_header.dart';
 import '../components/summary_card.dart';
+import 'map_position.dart';
 
-class AvisPage extends StatefulWidget {
-  const AvisPage({super.key});
+class CapteurPage extends StatefulWidget {
+  const CapteurPage({super.key});
 
   @override
-  State<AvisPage> createState() => _AvisPageState();
+  State<CapteurPage> createState() => _CapteurPageState();
 }
 
-class _AvisPageState extends State<AvisPage> {
+class _CapteurPageState extends State<CapteurPage> {
 
-  List<AvisModel?> listAvis = [] ;
+  List<CapteurModel?> listCapteur = [] ;
   bool isLoad = false ;
   int nbre = 0 ;
 
 
 
   getList() async{
-
-    List<AvisModel?> list = await AvisController().getAvisByStructure();
+    List<CapteurModel?> list = await CapteurController().getList();
 
     if(list.isNotEmpty){
       setState(() {
-        listAvis = list ;
-
+        listCapteur = list ;
       });
       Timer(Duration(seconds: 2), () {
         setState(() {
           isLoad = true ;
-          nbre = listAvis.length ;
+          nbre = listCapteur.length ;
         });
       });
     }
@@ -52,7 +52,7 @@ class _AvisPageState extends State<AvisPage> {
       Timer(Duration(seconds: 2), () {
         setState(() {
           isLoad = true ;
-          nbre = listAvis.length ;
+          nbre = listCapteur.length ;
         });
       });
     }
@@ -67,7 +67,6 @@ class _AvisPageState extends State<AvisPage> {
   void initState() {
     super.initState();
     getList() ;
-
   }
 
 
@@ -76,14 +75,14 @@ class _AvisPageState extends State<AvisPage> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveBreakpoints.of(context);
     var summaryCards = [
-      SummaryCard(title: "Nombre d'avis ", value: '$nbre'),
+      SummaryCard(title: "Nombre de Poubelles remplies ", value: '$nbre'),
     ];
     return ContentView(child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const PageHeader(
-          title: 'Gestion des Avis',
-          description: "Lisez les commentaires de vos clients",
+          title: 'Gestion des Capteurs',
+          description: "liste des poubelles Remplies ",
         ),
         const Gap(16),
         if (responsive.isMobile)
@@ -98,7 +97,7 @@ class _AvisPageState extends State<AvisPage> {
         const Gap(16),
 
         isLoad?
-        Expanded(child: listView( listAvis,))
+        Expanded(child: listView( listCapteur,))
             : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
@@ -112,25 +111,9 @@ class _AvisPageState extends State<AvisPage> {
 
 
 
-  Widget star(){
-    return  InkWell(
-      child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: SvgPicture.asset(
-          'assets/icons/star1.svg',
-          height: 20,
-          width: 20,
-          semanticsLabel: 'Logo',
-        ),
-      ),
-    ) ;
-  }
 
 
-
-
-
-  Widget listView(List<AvisModel?> list){
+  Widget listView(List<CapteurModel?> list){
 
     if(list.isEmpty)
     {
@@ -155,10 +138,9 @@ class _AvisPageState extends State<AvisPage> {
     return ListView.separated(
       itemCount: list.length,
       itemBuilder: (context, index) {
-        AvisModel? item = list[index] ;
+        CapteurModel? item = list[index] ;
         return GestureDetector(
-          onTap:(){
-          } ,
+          onTap:() => showMapPopup(context, item.latitude, item.longitude),
           child: SizedBox(
             width: double.infinity,
             child: Card(
@@ -176,7 +158,7 @@ class _AvisPageState extends State<AvisPage> {
                             leading: Padding(
                               padding: const EdgeInsets.all(3.0),
                               child: SvgPicture.asset(
-                                'assets/icons/person.svg',
+                                'assets/icons/prochain.svg',
                                 height: 24,
                                 width: 24,
                                 color: vert(),
@@ -185,18 +167,10 @@ class _AvisPageState extends State<AvisPage> {
                             ),
                             title: Center(
                               child: Text(
-                                item!.nom,
+                                'Etat de la Poubelle : ${item!.fill_state}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            subtitle: Center(
-                              child: Text(
-                                item.comment,
-                                style: TextStyle(
-                                  fontSize: 11,
                                 ),
                               ),
                             ),
@@ -205,18 +179,10 @@ class _AvisPageState extends State<AvisPage> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  item.date,
+                                  item.time.toString().split(' ').first,
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(
-                                    item.notes,
-                                        (_) => star(), // ton widget étoile
                                   ),
                                 ),
                               ],

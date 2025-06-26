@@ -170,28 +170,113 @@ class _ViolationPhotoPageState extends State<ViolationPhotoPage> {
                 },
                 child: SizedBox(
                   width: double.infinity,
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            height: 150,
-                            child: Image.network(
-                              imageUrls[index],
+                  // child: Card(
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  //     child: Column(
+                  //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //       children: [
+                  //         SizedBox(
+                  //           width: double.infinity,
+                  //           height: 150,
+                  //           child: Image.network(
+                  //             imageUrls[index],
+                  //             fit: BoxFit.cover,
+                  //           ),
+                  //         ),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text('Description :' , style: TextStyle(fontSize: 11 , fontWeight: FontWeight.w600), ),
+                  //             Expanded(child: Text(item!.description, style:TextStyle(fontSize: 11 , fontWeight: FontWeight.normal), textAlign: TextAlign.center,)),
+                  //           ],
+                  //         ),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text('Date et Lieu :', style: TextStyle(fontSize: 11 , fontWeight: FontWeight.w600), ),
+                  //             Expanded(
+                  //               child: Text(
+                  //                 '${item.date_upload} á ${item.lieu}', textAlign: TextAlign.center,
+                  //                 style:TextStyle(fontSize: 11,  fontWeight: FontWeight.normal),
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  child: GestureDetector(
+                    onTap: (){
+                      showImagePopup(context, imageUrls[index]) ;
+                    },
+                    child: Card(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        clipBehavior: Clip.antiAlias,
+                        elevation: 4,
+                        child: Stack(
+                          children: [
+                            Ink.image(
+                              image: NetworkImage(imageUrls[index]),
                               fit: BoxFit.cover,
+                              height: 200,
+                              width: double.infinity,
+                              child: InkWell(onTap: () {}),
                             ),
-                          ),
-                          Text(item!.description, style:TextStyle(fontSize: 15 , fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
-                          Text(
-                            '${item.lieu}\n${item.date_upload}', textAlign: TextAlign.center,
-                            style:TextStyle(fontSize: 13),
-                          ),
-                        ],
+                            Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black.withOpacity(0.6),
+                                    Colors.transparent,
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                        item!.description,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Flexible(
+                                    child: Text(
+                                      '${item.date_upload} à ${item.lieu}',
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                ],
+                              ),
+                            ),
+                          ]
+                        ),
                       ),
-                    ),
                   ),
                 ),
               );
@@ -202,6 +287,23 @@ class _ViolationPhotoPageState extends State<ViolationPhotoPage> {
       },
     );
   }
+
+  void showImagePopup(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
 
 
 }

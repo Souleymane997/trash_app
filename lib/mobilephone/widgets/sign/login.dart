@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   bool  isLoad = false ;
+  bool isObscure = true ;
 
   Future<void> _submit() async {
 
@@ -157,9 +158,16 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 20),
                       TextFormField(
                         controller: _passwordController,
-                        obscureText: true,
+                        obscureText: isObscure,
                         keyboardType:TextInputType.text,
-                        decoration: _inputDecoration("Mot de passe"),
+                        decoration: _inputDecoration("Mot de passe").copyWith(
+                          suffixIcon: IconButton( icon: isObscure? Icon(Icons.visibility) : Icon(Icons.visibility_off)  ,
+                            onPressed: (){
+                            setState(() {
+                              isObscure = !isObscure ;
+                            });
+                          },),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) return 'Mot de passe requis';
                           if (value.length < 6) return '6 caractères minimum';

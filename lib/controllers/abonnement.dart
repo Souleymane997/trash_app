@@ -134,12 +134,16 @@ class AbonnementController with ChangeNotifier {
     try {
       final response = await supabase
           .from('abonnements')
-          .select('abonnement_id,actif,users(nom,tel),services(nom_service)')
-          .eq('services.structure_id', userId);
+          .select('abonnement_id,actif,users(nom,tel),services(nom_service,structure_id)');
+
 
       List<AbonnUserModel> list = (response as List)
           .map((e) => AbonnUserModel.fromJson(e as Map<String, dynamic>))
+          .where((user) => user.structure_id == userId)
           .toList();
+
+
+
 
       if (list.isNotEmpty) {
         return list;

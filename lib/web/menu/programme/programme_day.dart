@@ -51,7 +51,7 @@ class _ProgrammeDayState extends State<ProgrammeDay> {
         for (var jour in joursChoisis) {
           selections[jour] = true;
         }
-       progAlreadyDefined = true ;
+        progAlreadyDefined = true ;
       });
 
     }
@@ -152,23 +152,10 @@ class _ProgrammeDayState extends State<ProgrammeDay> {
       children: [
         const PageHeader(
           title: 'Gestion du Programme',
-          description: " Jour de Passage ",
+          description: "Jour de Passage ",
         ),
         const Gap(16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Text("Liste des Jours de la semaine", style: TextStyle(
-                  fontSize: 22
-              ),),
-            ),
-          ],
-        ),
-
       isLoad?
-
       Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -179,19 +166,24 @@ class _ProgrammeDayState extends State<ProgrammeDay> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Sélectionne 2 jours maximum',
+                'Sélectionnez 2 jours au maximun',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Divider(),
-              ...jours.map((jour) {
-                final bool estCoche = selections[jour] ?? false;
-                final bool desactive = !estCoche && totalSelectionnes >= 2;
-                return CheckboxListTile(
-                  title: Text(jour),
-                  value: estCoche,
-                  onChanged: desactive ? null : (val) => toggleSelection(jour, val),
-                );
-              }),
+              ListView(
+                shrinkWrap: true,
+                children: jours.map((jour) {
+                  final bool estCoche = selections[jour] ?? false;
+                  final bool desactive = !estCoche && totalSelectionnes >= 2;
+                  return CheckboxListTile(
+                    title: Text(jour),
+                    value: estCoche,
+                    onChanged: desactive ? null : (val) => toggleSelection(jour, val) ,
+
+                  );
+                }).toList(),
+              ),
+
             ],
           ),
         ),
@@ -199,7 +191,7 @@ class _ProgrammeDayState extends State<ProgrammeDay> {
         padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
         child: CircularProgressIndicator(),
       )),
-        ( totalSelectionnes >= 2 && progAlreadyDefined == false) ?
+        ( totalSelectionnes >=2 && progAlreadyDefined == false) ?
         Center(
           child: Container(
             padding: const EdgeInsets.only(right: 16.0),
@@ -230,14 +222,14 @@ class _ProgrammeDayState extends State<ProgrammeDay> {
           ),
         ) : Container(),
 
-        ( totalSelectionnes >= 2 && progAlreadyDefined && isLoad) ?
+        ( totalSelectionnes >=2 && progAlreadyDefined && isLoad) ?
         Center(
           child: Container(
             padding: const EdgeInsets.only(right: 16.0),
             width: 300,
             child: ElevatedButton(
               onPressed: (){
-               edit() ;
+                edit() ;
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: vert(),

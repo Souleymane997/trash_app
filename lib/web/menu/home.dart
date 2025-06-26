@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:trash_app/shared/colors.dart';
 import 'package:trash_app/web/menu/avis/avis.dart';
+import 'package:trash_app/web/menu/capteur/capteur.dart';
 import 'package:trash_app/web/menu/notifications/notif.dart';
 import 'package:trash_app/web/menu/photos/photo.dart';
 import 'package:trash_app/web/menu/programme/programme_day.dart';
@@ -47,6 +48,7 @@ class _AccueilPageState extends State<AccueilPage> {
           ServicesPages(),
           Abonnement(),
           ProgrammeDay(),
+          CapteurPage(),
           AvisPage()
         ];
 
@@ -56,6 +58,7 @@ class _AccueilPageState extends State<AccueilPage> {
           'Services',
           'Abonnement',
           'Programmes',
+          'Capteurs',
           'Avis'
         ];
 
@@ -65,6 +68,7 @@ class _AccueilPageState extends State<AccueilPage> {
           'setting.svg',
           'abonne.svg',
           'calendar.svg',
+          'sensor.svg',
           'emoji.svg'
         ];
       });
@@ -169,94 +173,102 @@ class _AccueilPageState extends State<AccueilPage> {
     final bool isMobile = MediaQuery.of(context).size.width < 600;
     final double size = 25 ;
     final double sizeDrawer = 15 ;
-    return Scaffold(
-      appBar: NavigationAppBar(roleUser:widget.idRole),
-      drawer: isMobile
-          ? Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-                decoration: BoxDecoration(
-                  color: vert(),
-                ),
-                child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+
+
+          return Scaffold(
+            appBar: NavigationAppBar(roleUser: widget.idRole),
+            drawer: isMobile
+                ? Drawer(
+              child: ListView(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: CircleAvatar(
-                      radius: 35,
-                      backgroundImage: AssetImage('assets/logos/logo1.png'),
+                  DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: vert(),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: CircleAvatar(
+                                radius: 35,
+                                backgroundImage: AssetImage(
+                                    'assets/logos/logo1.png'),
+                              ),
+                            ),
+                            CustomText('TrashApp',),
+                          ],
+                        ),
+                      )),
+
+                  for (int i = 0; i < pages.length; i++)
+                    ListTile(
+                      leading: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset(
+                          'assets/icons/${path[i]}',
+                          height: sizeDrawer,
+                          width: sizeDrawer,
+                          semanticsLabel: path[i],
+                        ),
+                      ),
+                      title: Text(titles[i]),
+                      selected: i == _selectedIndex,
+                      onTap: () {
+                        _onDestinationSelected(i);
+                        Navigator.pop(context);
+                      },
                     ),
-                  ),
-                  CustomText('TrashApp',),
                 ],
               ),
-            )),
-
-            for (int i = 0; i < pages.length; i++)
-              ListTile(
-                leading: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
-                    'assets/icons/${path[i]}',
-                    height: sizeDrawer,
-                    width: sizeDrawer,
-                    semanticsLabel:  path[i],
-                  ),
-                ),
-                title: Text(titles[i]),
-                selected: i == _selectedIndex,
-                onTap: () {
-                  _onDestinationSelected(i);
-                  Navigator.pop(context);
-                },
-              ),
-          ],
-        ),
-      )
-          : null,
-      body: Row(
-        children: [
-          if (!isMobile)
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                    child: IntrinsicHeight(
-                      child: NavigationRail(
-                        selectedIndex: _selectedIndex,
-                        onDestinationSelected: _onDestinationSelected,
-                        labelType: NavigationRailLabelType.all,
-                        destinations: [
-                          for (int i = 0; i < pages.length; i++)
-                            NavigationRailDestination(
-                              icon: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                child: SvgPicture.asset(
-                                  'assets/icons/${path[i]}',
-                                  height: size,
-                                  width: size,
-                                  color: noir(),
-                                  semanticsLabel: path[i],
-                                ),
+            )
+                : null,
+            body: Row(
+                children: [
+                  if (!isMobile)
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        return SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(minHeight: constraints
+                                .maxHeight),
+                            child: IntrinsicHeight(
+                              child: NavigationRail(
+                                selectedIndex: _selectedIndex,
+                                onDestinationSelected: _onDestinationSelected,
+                                labelType: NavigationRailLabelType.all,
+                                destinations: [
+                                  for (int i = 0; i < pages.length; i++)
+                                    NavigationRailDestination(
+                                      icon: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16.0),
+                                        child: SvgPicture.asset(
+                                          'assets/icons/${path[i]}',
+                                          height: size,
+                                          width: size,
+                                          color: noir(),
+                                          semanticsLabel: path[i],
+                                        ),
+                                      ),
+                                      label: Text(titles[i]),
+                                    ),
+                                ],
                               ),
-                              label: Text(titles[i]),
                             ),
-                        ],
-                      ),
+                          ),
+                        );
+                      },
                     ),
+                  const VerticalDivider(width: 1),
+                  //Expanded(child: pages[_selectedIndex]),
+                  Expanded(
+                    child: pages[_selectedIndex],
                   ),
-                );
-              },
+                ]
             ),
-          const VerticalDivider(width: 1),
-          Expanded(child:  pages[_selectedIndex]) ,
-            ]
-            ),
-    );
-  }
-}
+          ) ;
+        }
 
+}

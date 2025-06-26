@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                   backgroundImage: AssetImage('assets/logos/logo1.png'),
                 ),
                 CustomText(
-                  'Trash Track',
+                  'Trash App',
                   tex: 2.1,
                   textAlign: TextAlign.center,
                   family: 'Lobster',
@@ -189,8 +189,9 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+
                 CustomText(
-                   'Bienvenue ${user.nom} !!',
+                  'Bienvenue ${user.nom.split(' ').first} !!',
                   tex: 1.7,
                   color: noir(),
                   family: 'Lobster',

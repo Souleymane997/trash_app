@@ -32,8 +32,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
     setState(() {
       isLoad = true ;
     });
-
-    AvisModel avis = AvisModel(id: 1, user_id: '', structure_id: widget.idStructure,comment: _avisController.text, notes: notes) ;
+    String date = '${DateTime.now().day}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().year.toString().padLeft(2, '0')}' ;
+    AvisModel avis = AvisModel(id: 1, user_id: '', nom: '', tel: '',structure_id: widget.idStructure,comment: _avisController.text, notes: notes, date: date) ;
 
     bool res = await AvisController().addAvis(avis) ;
 

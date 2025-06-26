@@ -1,9 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:image/image.dart' as img;
 import 'package:path/path.dart';
 import 'package:trash_app/mobilephone/widgets/screens/violation/violationsend.dart';
 import 'package:trash_app/shared/dialoguetoast.dart';
@@ -29,16 +33,46 @@ class _SendPhotoState extends State<SendPhoto> {
   File? _image;
   bool isLoad = false ;
 
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.camera);
+    final picked = await picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 800,       // Réduit la largeur
+      maxHeight: 800,      // Réduit la hauteur
+      imageQuality: 75,    // Réduit la qualité (0-100)
+    );
 
     if (picked != null) {
-      setState(() {
-        _image = File(picked.path);
-      });
+      final originalBytes = await picked.readAsBytes();
+      final decodedImage = img.decodeImage(originalBytes);
+
+      if (decodedImage != null) {
+
+        final compressedBytes = img.encodeJpg(decodedImage, quality: 60);
+
+        final tempDir = await getTemporaryDirectory();
+        final fileName = basename(picked.path);
+        final compressedFile = File('${tempDir.path}/compressed_$fileName');
+        await compressedFile.writeAsBytes(compressedBytes);
+
+        setState(() {
+          _image = compressedFile;
+        });
+
+        if (kDebugMode) {
+          print("Image compressée enregistrée : ${compressedFile.path}");
+        }
+      } else {
+        if (kDebugMode) {
+          print("Impossible de décoder l'image.");
+        }
+      }
     }
   }
+
+
+
 
   Future<void> _uploadImage(BuildContext context) async {
     if (_image == null) return;
@@ -113,108 +147,122 @@ class _SendPhotoState extends State<SendPhoto> {
           backgroundColor: vert(),
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _image != null
-                  ? Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Image.file(
-                    _image!,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              )
-                  : Center(child: Icon(Icons.image, size: MediaQuery.of(context).size.width * 0.8,)),
-              SizedBox(height: 20),
-
-              _image != null
-                  ? Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  child: TextFormField(
-                    controller: violationController,
-                    maxLines: 3,
-                    decoration: _inputDecoration("Description"),
-                    keyboardType:TextInputType.text,
-                    onChanged: (value){
-                      setState(() {
-                        violationController.text = value ;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'violation requis';
-                      return null;
-                    },
-                  ),
-                ),
-              ) : Container(),
-              SizedBox(height: 10),
-              _image != null
-                  ?Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  child: TextFormField(
-                    controller: lieuController,
-                    decoration: _inputDecoration("Lieu"),
-                    keyboardType:TextInputType.text,
-                    onChanged: (value){
-                      setState(() {
-                        lieuController.text = value ;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'lieu requis';
-                      return null;
-                    },
-                  ),
-                ),
-              ) : Container(),
-              SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: _pickImage,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:  (_image != null) ? gris() : vert(),
-                  foregroundColor: (_image != null) ? vert() : blanc(),
-                  padding: EdgeInsets.symmetric(horizontal: 60, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: vert(), width: 1),
-                  ),
-                ),
-                child: (_image != null)?  Text("Reprendre la photo") : Text("Prendre une photo"),
-              ),
-
-              SizedBox(height: 15),
-              if (_image != null)
-                ElevatedButton(
-                  onPressed:(){
-                    _uploadImage(context) ;
-                  } ,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: vert(),
-                    foregroundColor: blanc(),
-                    padding: EdgeInsets.symmetric(horizontal: 60, vertical: 14),
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _image != null
+                      ? Card(
+                    elevation: 4,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: vert(), width: 1),
                     ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: MediaQuery.of(context).size.height * 0.27,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Image.file(
+                        _image!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                      : Center(child: Icon(Icons.image, size: MediaQuery.of(context).size.width * 0.8,)),
+                  SizedBox(height: 20),
+
+                  _image != null
+                      ? Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                        controller: violationController,
+                        maxLines: 3,
+                        decoration: _inputDecoration("Description"),
+                        keyboardType:TextInputType.text,
+                        onChanged: (value){
+                          setState(() {
+                            violationController.text = value ;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) return 'violation requis';
+                          return null;
+                        },
+                      ),
+                    ),
+                  ) : Container(),
+                  SizedBox(height: 10),
+                  _image != null
+                      ?Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                        controller: lieuController,
+                        decoration: _inputDecoration("Lieu"),
+                        keyboardType:TextInputType.text,
+                        onChanged: (value){
+                          setState(() {
+                            lieuController.text = value ;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) return 'lieu requis';
+                          return null;
+                        },
+                      ),
+                    ),
+                  ) : Container(),
+                  SizedBox(height: 15),
+                  if (_image != null)
+                    ElevatedButton(
+                      onPressed:(){
+                        _uploadImage(context) ;
+                      } ,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: vert(),
+                        foregroundColor: blanc(),
+                        padding: EdgeInsets.symmetric(horizontal: 60, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: vert(), width: 1),
+                        ),
+                      ),
+                      child: Text("Envoyer la photo"),
+                    ),
+                   _image==null?  Gap(0): Gap(70) ,
+
+                  (_image != null)?
+                  TextButton(
+                    onPressed:_pickImage,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomText('Reprendre la photo', color: vert(),),
+                    ),
+                  )
+                   : ElevatedButton(
+                    onPressed: _pickImage,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:  (_image != null) ? gris() : vert(),
+                      foregroundColor: (_image != null) ? vert() : blanc(),
+                      padding: EdgeInsets.symmetric(horizontal: 60, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: vert(), width: 1),
+                      ),
+                    ),
+                    child: Text("Prendre une photo"),
                   ),
-                  child: Text("Envoyer la photo"),
-                ),
-            ],
+
+                ],
+              ),
+            ),
           ),
         ),
       ),
