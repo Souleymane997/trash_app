@@ -136,14 +136,47 @@ class AbonnementController with ChangeNotifier {
           .from('abonnements')
           .select('abonnement_id,actif,users(nom,tel),services(nom_service,structure_id)');
 
-
       List<AbonnUserModel> list = (response as List)
           .map((e) => AbonnUserModel.fromJson(e as Map<String, dynamic>))
           .where((user) => user.structure_id == userId)
           .toList();
 
+      if (list.isNotEmpty) {
+        return list;
+      } else {
+        return [];
+      }
+
+    } catch (e) {
+      debugPrint("Erreur  : $e");
+    }
+    loading = false;
+    notifyListeners();
+    return [];
+  }
 
 
+
+
+  Future<List<AbonnUserModel?>> getAllAbonnUsers() async {
+    final supabase = Supabase.instance.client;
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      if (kDebugMode) {
+        print("❌ Aucun utilisateur connecté.");
+      }
+      return [];
+    }
+    loading = true;
+    notifyListeners();
+
+    try {
+      final response = await supabase
+          .from('abonnements')
+          .select('abonnement_id,actif,users(nom,tel),services(nom_service,structure_id)');
+
+      List<AbonnUserModel> list = (response as List)
+          .map((e) => AbonnUserModel.fromJson(e as Map<String, dynamic>)).toList();
 
       if (list.isNotEmpty) {
         return list;

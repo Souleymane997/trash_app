@@ -95,7 +95,7 @@ class _ServicesPagesState extends State<ServicesPages> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveBreakpoints.of(context);
     var summaryCards = [
-      SummaryCard(title: "Nombre de Structures", value: '0'),
+      SummaryCard(title: "Nombre de Services", value: '$nbre'),
     ];
 
 
@@ -197,49 +197,107 @@ class _ServicesPagesState extends State<ServicesPages> {
         ],
       ) ,) ;
     }
-
-    return ListView.separated(
-      itemCount: list.length,
-      itemBuilder: (context, index) {
-        ServiceModel item = list[index] ;
-        return GestureDetector(
-          onTap:(){
-            openEditServiceDialog(item) ;
-          } ,
-          child: SizedBox(
-            width: double.infinity,
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(3.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/serv.svg',
-                        height: 40,
-                        width:40,
-                        semanticsLabel: 'structure',
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(item.nom_service, style:TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
-                          Text('${item.nbre} fois/semaine : ${item.tarif} Fcfa', style:TextStyle(fontSize: 12 , fontWeight: FontWeight.w300),)
-                        ],
-                      ),
-                    ),
-                  ],
+    
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: vert(),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(12) , topRight: Radius.circular(12)  ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Text('Nom du service', style: TextStyle(fontWeight: FontWeight.bold , color: blanc())),
                 ),
-              ),
+                Expanded(
+                  flex: 2,
+                  child: Text('Fréquence', style: TextStyle(fontWeight: FontWeight.bold , color: blanc()), textAlign: TextAlign.center,),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text('Tarif (Fcfa/mois)', style: TextStyle(fontWeight: FontWeight.bold, color: blanc()), textAlign: TextAlign.end,),
+                ),
+              ],
             ),
           ),
-        );
-      },
-      separatorBuilder: (context, index) => Divider(),
-    ) ;
+          const SizedBox(height: 4),
+
+          Expanded(
+            child: ListView.separated(
+              itemCount: list.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 6),
+              itemBuilder: (context, index) {
+                ServiceModel item = list[index];
+      
+                return GestureDetector(
+                  onTap: () {
+                    openEditServiceDialog(item);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/serv.svg',
+                                    height: 24,
+                                    width: 24,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      item.nom_service,
+                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                '${item.nbre} fois/semaine',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                '${item.tarif} Fcfa',
+                                textAlign: TextAlign.end,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Divider(),
+                      ],
+                    ),
+                  ),
+                );
+
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+
   }
 }

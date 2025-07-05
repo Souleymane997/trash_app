@@ -30,7 +30,7 @@ class CapteurController with ChangeNotifier {
     try {
       final response = await supabase
           .from('sensordata')
-          .select()
+          .select().eq('fill_state', 'rempli')
           .order('timestamp', ascending: true);
 
       debugPrint(response.toString()) ;
