@@ -13,6 +13,7 @@ import 'package:trash_app/web/menu/services/abonnement.dart';
 import 'package:trash_app/web/menu/services/services.dart';
 import 'package:trash_app/web/menu/structure/structure.dart';
 import 'package:trash_app/web/menu/users/admin.dart';
+import 'package:trash_app/web/menu/users/dash.dart';
 import 'package:trash_app/web/menu/users/users.dart';
 import 'package:trash_app/web/menu/settings/arrondissement/arrond.dart';
 import 'package:trash_app/web/menu/settings/role/role.dart';
@@ -27,10 +28,10 @@ class AccueilPage extends StatefulWidget {
   final int idRole ;
 
   @override
-  State<AccueilPage> createState() => _AccueilPageState();
+  State<AccueilPage> createState() => AccueilPageState();
 }
 
-class _AccueilPageState extends State<AccueilPage> {
+class AccueilPageState extends State<AccueilPage> {
   int _selectedIndex = 0;
 
   late final List<String> titles;
@@ -43,6 +44,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
       setState(() {
         pages = [
+          DashPage(idRole: widget.idRole,),
           UsersPage(idRole: widget.idRole,),
           NotifPage(),
           ServicesPages(),
@@ -54,6 +56,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
         titles = [
           'Dashbord',
+          'Utilisateurs',
           'Notifications',
           'Services',
           'Abonnement',
@@ -64,6 +67,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
         path = [
           'dash.svg',
+          'users.svg',
           'notif.svg' ,
           'setting.svg',
           'abonne.svg',
@@ -79,6 +83,7 @@ class _AccueilPageState extends State<AccueilPage> {
       if(widget.idRole == 3){
         setState(() {
           pages = [
+            DashPage(idRole: widget.idRole,),
             UsersPage(idRole: widget.idRole,),
             StructuresPage(),
             ViolationPhotoPage(),
@@ -88,6 +93,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
           titles = [
             'Dashbord',
+            'Utilisateurs',
             'Structures',
             'Violations',
             'Arrondissement',
@@ -96,6 +102,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
           path = [
             'dash.svg',
+            'users.svg',
             'structure.svg',
             'violation.svg',
             'arrond.svg',
@@ -105,6 +112,7 @@ class _AccueilPageState extends State<AccueilPage> {
       }else{
           setState(() {
             pages = [
+              DashPage(idRole: widget.idRole,),
               UsersPage(idRole: widget.idRole,),
               StructuresPage(),
               ViolationPhotoPage(),
@@ -117,6 +125,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
             titles = [
               'Dashbord',
+              'Utilisateurs',
               'Structures',
               'Violations',
               'Arrondissement',
@@ -126,6 +135,7 @@ class _AccueilPageState extends State<AccueilPage> {
             ];
             path = [
               'dash.svg',
+              'users.svg',
               'structure.svg',
               'violation.svg',
               'arrond.svg',
@@ -134,8 +144,6 @@ class _AccueilPageState extends State<AccueilPage> {
               'admin.svg',
             ];
           });
-
-
 
       }
     }
@@ -156,7 +164,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
 
 
-  void _onDestinationSelected(int index) {
+  void onDestinationSelected(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -165,15 +173,11 @@ class _AccueilPageState extends State<AccueilPage> {
 
 
 
-
-
-
   @override
   Widget build(BuildContext context) {
     final bool isMobile = MediaQuery.of(context).size.width < 600;
     final double size = 25 ;
     final double sizeDrawer = 15 ;
-
 
           return Scaffold(
             appBar: NavigationAppBar(roleUser: widget.idRole),
@@ -216,7 +220,7 @@ class _AccueilPageState extends State<AccueilPage> {
                       title: Text(titles[i]),
                       selected: i == _selectedIndex,
                       onTap: () {
-                        _onDestinationSelected(i);
+                        onDestinationSelected(i);
                         Navigator.pop(context);
                       },
                     ),
@@ -224,6 +228,7 @@ class _AccueilPageState extends State<AccueilPage> {
               ),
             )
                 : null,
+
             body: Row(
                 children: [
                   if (!isMobile)
@@ -236,7 +241,7 @@ class _AccueilPageState extends State<AccueilPage> {
                             child: IntrinsicHeight(
                               child: NavigationRail(
                                 selectedIndex: _selectedIndex,
-                                onDestinationSelected: _onDestinationSelected,
+                                onDestinationSelected: onDestinationSelected,
                                 labelType: NavigationRailLabelType.all,
                                 destinations: [
                                   for (int i = 0; i < pages.length; i++)
@@ -264,11 +269,13 @@ class _AccueilPageState extends State<AccueilPage> {
                   const VerticalDivider(width: 1),
                   //Expanded(child: pages[_selectedIndex]),
                   Expanded(
-                    child: pages[_selectedIndex],
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: pages[_selectedIndex],
+                    ),
                   ),
                 ]
             ),
           ) ;
         }
-
 }

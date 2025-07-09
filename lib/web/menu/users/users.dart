@@ -11,7 +11,6 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:trash_app/controllers/user_controller.dart';
 import 'package:trash_app/models/users_model.dart';
 import 'package:trash_app/web/menu/components/content_view.dart';
-import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 import '../../../controllers/abonnement.dart';
 import '../../../controllers/notif_controller.dart';
@@ -22,7 +21,7 @@ import '../../../models/structure_model.dart';
 import '../../../shared/colors.dart';
 import '../../../shared/custom_text.dart';
 import '../components/page_header.dart';
-import '../services/abonnement.dart';
+import '../components/summary_card.dart';
 import 'add_user.dart';
 
 class UsersPage extends StatefulWidget {
@@ -157,21 +156,9 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveBreakpoints.of(context);
-    var data = [
-      StatCard(title: 'Nombre d\'Utilisateurs', nbre: nbre, color: vert(), icon: 'users.svg', page: null,),
-      StatCard(title: 'Nombre d\'Abonnés', nbre: nbreAbon, color: red(), icon: 'user.svg', page: Abonnement(),),
-
+    var summaryCards = [
+      SummaryCard(title: "Nombre d'utilisateurs", value: '$nbre'),
     ];
-    var data1 = [
-      StatCard(title: 'Nombre de Structure', nbre: nbreStructure, color: red(), icon: 'structure.svg', page: null),
-      StatCard(title: 'Notifications', nbre: nbreNotifs, color: vert(), icon: 'notifs.svg', page: null,)
-    ];
-
-    var data2 = [
-      StatCard(title: 'Nombre de Capteurs', nbre: 0, color: vert(), icon: 'sensor.svg', page: null,),
-      StatCard(title: 'Nombre de Collecte realisés', nbre:0, color: red(), icon: 'prochain.svg', page: null,)
-    ];
-
 
     return ContentView(
         child: Column(
@@ -183,31 +170,11 @@ class _UsersPageState extends State<UsersPage> {
             ),
             const Gap(10),
             if (responsive.isMobile)
-              ...data
+              ...summaryCards
             else
               Row(
-                children: data
-                    .map<Widget>((card) => Expanded(child:  card))
-                    .intersperse(const Gap(16))
-                    .toList(),
-              ),
-            const Gap(5),
-            if (responsive.isMobile)
-              ...data1
-            else
-              Row(
-                children: data1
-                    .map<Widget>((card) => Expanded(child:  card))
-                    .intersperse(const Gap(16))
-                    .toList(),
-              ),
-            const Gap(5),
-            if (responsive.isMobile)
-              ...data2
-            else
-              Row(
-                children: data2
-                    .map<Widget>((card) => Expanded(child:  card))
+                children: summaryCards
+                    .map<Widget>((card) => Expanded(child: card))
                     .intersperse(const Gap(16))
                     .toList(),
               ),
@@ -217,7 +184,7 @@ class _UsersPageState extends State<UsersPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 16.0),
-                  child: Text(" Liste des Utilisateurs" , style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                  child: Text("Liste des Utilisateurs" , style: TextStyle(fontSize: 22),),
                 ),
                 (widget.idRole == 2)?
                 Padding(
@@ -252,10 +219,9 @@ class _UsersPageState extends State<UsersPage> {
               ],
             ),
             const Gap(8),
+
             isLoad?
-            Expanded(
-              child: _TableView(list,listStringStructure),
-            ): Center(child: Padding(
+            listView(list,listStringStructure) : Center(child: Padding(
               padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
               child: CircularProgressIndicator(),
             )),
@@ -265,199 +231,140 @@ class _UsersPageState extends State<UsersPage> {
 }
 
 
+Widget listView( List<UserModel> listUsers , List<String> listStringStructure ){
 
-class _TableView extends StatelessWidget {
-  const _TableView(this.listUsers, this.listStringStructure);
-  final List<UserModel> listUsers ;
-  final List<String> listStringStructure ;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final ScrollController _verticalController = ScrollController();
-    final colorScheme = theme.colorScheme;
-    final decoration = TableSpanDecoration(
-      border: TableSpanBorder(
-        trailing: BorderSide(color: theme.dividerColor),
-      ),
-    );
-
-    if(listUsers.isEmpty) {
-      return Center(child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: SvgPicture.asset(
-              'assets/icons/empty.svg',
-              height: 100,
-              width: 100,
-              color: noir(),
-              semanticsLabel: 'structure',
-            ),
+  if(listUsers.isEmpty)
+  {
+    return Center(child:Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 100.0, bottom: 3.0, left: 3.0, right: 3.0),
+          child: SvgPicture.asset(
+            'assets/icons/empty.svg',
+            height: 100,
+            width:100,
+            color: noir(),
+            semanticsLabel: 'structure',
           ),
-          CustomText("Liste d'Utilisateurs vide !!", color: noir(),),
-        ],
-      ),);
-    }
+        ),
+        CustomText("Liste vide !!", color: noir(),) ,
+      ],
+    ) ,) ;
+  }
 
-    return Scrollbar(
-      thumbVisibility: true,
-      thickness: 3,
-      radius: const Radius.circular(8),
-        controller: _verticalController,
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        child: TableView.builder(
-          columnCount: 6,
-          rowCount:listUsers.length+1,
-          pinnedRowCount: 1,
-          pinnedColumnCount: 1,
-          columnBuilder: (index) {
-            return TableSpan(
-              foregroundDecoration: index == 0 ? decoration : null,
-              extent: const FractionalTableSpanExtent(1 / 6),
-            );
-          },
-          rowBuilder: (index) {
-            return TableSpan(
-              foregroundDecoration: index == 0 ? decoration : null,
-              extent: const FixedTableSpanExtent(50),
-            );
-          },
-          cellBuilder: (context, vicinity) {
-            final isStickyHeader = vicinity.xIndex == 0 || vicinity.yIndex == 0;
-            var label = '';
+  return Card(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    child: Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: vert(),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(12) , topRight: Radius.circular(12)  ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text('Nom', style: TextStyle(fontWeight: FontWeight.bold , color: blanc())),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text('Email', style: TextStyle(fontWeight: FontWeight.bold , color: blanc()), textAlign: TextAlign.center,),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text('Telephone', style: TextStyle(fontWeight: FontWeight.bold , color: blanc()), textAlign: TextAlign.center,),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text('Secteur', style: TextStyle(fontWeight: FontWeight.bold , color: blanc()), textAlign: TextAlign.center,),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text('Structure', style: TextStyle(fontWeight: FontWeight.bold, color: blanc()), textAlign: TextAlign.end,),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
 
-            final rowIndex = vicinity.yIndex ; // ← important
-            final columnIndex = vicinity.xIndex;
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: listUsers.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 6),
+          itemBuilder: (context, index) {
+            UserModel item = listUsers[index];
+            return GestureDetector(
+              onTap: () {
 
-            if (vicinity.yIndex == 0) {
-              switch (columnIndex) {
-                case 0:
-                  label = 'Nº';
-                case 1:
-                  label = 'Nom';
-                case 2:
-                  label = 'Email';
-                case 3:
-                  label = 'Telephone';
-                case 4:
-                  label = 'Secteur';
-                case 5:
-                  label = 'Structure';
-              }
-            } else {
-              final user = listUsers[rowIndex-1];
-              final structure = listStringStructure[rowIndex-1];
-              switch (columnIndex) {
-                case 0:
-                  label = rowIndex.toString() ;
-                case 1:
-                  label = user.nom.toString();
-                case 2:
-                  label = user.email.toString();
-                case 3:
-                  label = user.tel.toString();
-                case 4:
-                  label = user.secteur.toString();
-                case 5:
-                  label = structure;
-              }
-            }
-            return TableViewCell(
-              child: ColoredBox(
-                color:
-                isStickyHeader ? Colors.transparent : colorScheme.surface,
-                child: Center(
-                  child: FittedBox(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          fontWeight: isStickyHeader ? FontWeight.w600 : null,
-                          color: isStickyHeader ? null : colorScheme.outline,
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            item.nom,
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
+
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            '${item.email}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            item.tel,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            item.secteur,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ),
+
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            listStringStructure[index],
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                    Divider(),
+                  ],
                 ),
               ),
             );
+
           },
         ),
-      ),
-    );
-  }
+      ],
+    ),
+  );
+
 }
 
 
-class StatCard extends StatelessWidget {
-  const StatCard({super.key, required this.title , required this.nbre , required this.color , required this.icon, required this.page});
-
-  final String title;
-  final int nbre;
-  final Color color;
-  final String icon;
-  final Widget? page ;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: (){
-        if (page != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => page!),
-          );
-        } else {
-          if (kDebugMode) {
-            print("Aucune page !");
-          }
-        }
-      },
-      child: SizedBox(
-        width: double.infinity,
-        child: Card(
-          color: color,
-          elevation: 6,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icons/$icon',
-                      height: 20,
-                      width: 20,
-                      color: blanc(),
-                      semanticsLabel: icon,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      title,
-                      style: TextStyle(
-                          color: blanc()
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  "$nbre",
-                  style: TextStyle(
-                    color: blanc(),
-                    fontSize: 24
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-
-  }
-}

@@ -171,7 +171,8 @@ class _ProgrammeDayState extends State<ProgrammeDay> {
               ),
               Divider(),
               ListView(
-                shrinkWrap: true,
+                shrinkWrap: true, // ✅ important
+                physics: const NeverScrollableScrollPhysics(),
                 children: jours.map((jour) {
                   final bool estCoche = selections[jour] ?? false;
                   final bool desactive = !estCoche && totalSelectionnes >= 2;

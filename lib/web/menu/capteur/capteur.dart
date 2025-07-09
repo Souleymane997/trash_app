@@ -56,10 +56,6 @@ class _CapteurPageState extends State<CapteurPage> {
         });
       });
     }
-
-
-
-
   }
 
 
@@ -97,7 +93,7 @@ class _CapteurPageState extends State<CapteurPage> {
         const Gap(16),
 
         isLoad?
-        Expanded(child: listView( listCapteur,))
+        listView( listCapteur,)
             : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
@@ -137,6 +133,8 @@ class _CapteurPageState extends State<CapteurPage> {
 
     return ListView.separated(
       itemCount: list.length,
+      shrinkWrap: true, // ✅ important
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         CapteurModel? item = list[index] ;
         return GestureDetector(

@@ -25,8 +25,6 @@ class _HomeWebViewState extends State<HomeWebView> {
   int idRole = 0 ;
   int id = 0 ;
 
-
-
   getUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -51,11 +49,7 @@ class _HomeWebViewState extends State<HomeWebView> {
 
       }
     }
-
-
-
   }
-
 
 
   @override

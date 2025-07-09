@@ -11,17 +11,15 @@ class PageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          title,
-          color: noir(),
-          tex: TailleText(context).titre,
-          fontWeight: FontWeight.w700,
-        ),
-        CustomText(description , color: noir(),),
-      ],
+    return ListTile(
+      title: CustomText(
+        title,
+        color: noir(),
+        tex: TailleText(context).titre,
+        textAlign: TextAlign.start,
+        fontWeight: FontWeight.w700,
+      ),
+      subtitle:   CustomText(description , color: noir(),  textAlign: TextAlign.start,),
     );
   }
 }

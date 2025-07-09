@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 import '../../../controllers/abonnement.dart';
 import '../../../models/abonn_model.dart';
@@ -79,7 +78,7 @@ class _AbonnementState extends State<Abonnement> {
           children: [
             const PageHeader(
               title: 'Abonnement',
-              description: "Mes Abonness",
+              description: "Mes Abonnés",
             ),
             const Gap(16),
             if (responsive.isMobile)
@@ -94,9 +93,7 @@ class _AbonnementState extends State<Abonnement> {
             const Gap(16),
 
             isLoad?
-            Expanded(
-              child: _TableView(list),
-            ): Center(child: Padding(
+            listView(list) : Center(child: Padding(
               padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
               child: CircularProgressIndicator(),
             )),
@@ -106,118 +103,139 @@ class _AbonnementState extends State<Abonnement> {
 }
 
 
+Widget listView( List<AbonnUserModel> listUsers ){
 
-class _TableView extends StatelessWidget {
-  const _TableView(this.listUsers);
-  final List<AbonnUserModel> listUsers ;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final decoration = TableSpanDecoration(
-      border: TableSpanBorder(
-        trailing: BorderSide(color: theme.dividerColor),
-      ),
-    );
-
-    if(listUsers.isEmpty) {
-      return Center(child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: SvgPicture.asset(
-              'assets/icons/empty.svg',
-              height: 100,
-              width: 100,
-              color: noir(),
-              semanticsLabel: 'structure',
-            ),
+  if(listUsers.isEmpty)
+  {
+    return Center(child:Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 100.0, bottom: 3.0, left: 3.0, right: 3.0),
+          child: SvgPicture.asset(
+            'assets/icons/empty.svg',
+            height: 100,
+            width:100,
+            color: noir(),
+            semanticsLabel: 'structure',
           ),
-          CustomText("Liste d'Utilisateurs vide !!", color: noir(),),
-        ],
-      ),);
-    }
+        ),
+        CustomText("Liste vide !!", color: noir(),) ,
+      ],
+    ) ,) ;
+  }
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: TableView.builder(
-        columnCount: 5,
-        rowCount:listUsers.length+1,
-        pinnedRowCount: 1,
-        pinnedColumnCount: 1,
-        columnBuilder: (index) {
-          return TableSpan(
-            foregroundDecoration: index == 0 ? decoration : null,
-            extent: const FractionalTableSpanExtent(1 / 5),
-          );
-        },
-        rowBuilder: (index) {
-          return TableSpan(
-            foregroundDecoration: index == 0 ? decoration : null,
-            extent: const FixedTableSpanExtent(50),
-          );
-        },
-        cellBuilder: (context, vicinity) {
-          final isStickyHeader = vicinity.xIndex == 0 || vicinity.yIndex == 0;
-          var label = '';
+  return Card(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    child: Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: vert(),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(12) , topRight: Radius.circular(12)  ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text('Nº', style: TextStyle(fontWeight: FontWeight.bold , color: blanc())),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text('Nom', style: TextStyle(fontWeight: FontWeight.bold , color: blanc()), textAlign: TextAlign.center,),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text('Telephone', style: TextStyle(fontWeight: FontWeight.bold , color: blanc()), textAlign: TextAlign.center,),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text('Service', style: TextStyle(fontWeight: FontWeight.bold , color: blanc()), textAlign: TextAlign.center,),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text('Actif', style: TextStyle(fontWeight: FontWeight.bold, color: blanc()), textAlign: TextAlign.end,),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
 
-          final rowIndex = vicinity.yIndex ; // ← important
-          final columnIndex = vicinity.xIndex;
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: listUsers.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 6),
+          itemBuilder: (context, index) {
+            AbonnUserModel item = listUsers[index];
+            return GestureDetector(
+              onTap: () {
 
-          if (vicinity.yIndex == 0) {
-            switch (columnIndex) {
-              case 0:
-                label = 'Nº';
-              case 1:
-                label = 'Nom';
-              case 2:
-                label = 'Telephone';
-              case 3:
-                label = 'Service';
-              case 4:
-                label = 'Actif';
-              
-            }
-          } else {
-            final user = listUsers[rowIndex-1];
-            switch (columnIndex) {
-              case 0:
-                label = rowIndex.toString() ;
-              case 1:
-                label = user.nom.toString();
-              case 2:
-                label = user.tel.toString();
-              case 3:
-                label = user.nom_service.toString();
-              case 4:
-                label =  (user.actif) ? 'oui' : 'non';
-              
-            }
-          }
-          return TableViewCell(
-            child: ColoredBox(
-              color:
-              isStickyHeader ? Colors.transparent : colorScheme.surface,
-              child: Center(
-                child: FittedBox(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        fontWeight: isStickyHeader ? FontWeight.w600 : null,
-                        color: isStickyHeader ? null : colorScheme.outline,
-                      ),
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            '${index+1}',
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            item.nom,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            item.tel,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            item.nom_service,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            (item.actif) ? 'oui' : 'non',
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ),
+
+                      ],
                     ),
-                  ),
+                    Divider(),
+                  ],
                 ),
               ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+            );
+
+          },
+        ),
+      ],
+    ),
+  );
+
 }

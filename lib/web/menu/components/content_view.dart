@@ -8,10 +8,9 @@ class ContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: ResponsiveBreakpoints.of(context).isMobile
-          ? const EdgeInsets.all(16)
-          : const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+          ? const EdgeInsets.all(16) : const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
       child: child,
     );
   }

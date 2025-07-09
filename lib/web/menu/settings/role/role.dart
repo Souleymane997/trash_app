@@ -140,9 +140,7 @@ class _RolePageState extends State<RolePage> {
         const Gap(16),
 
         isLoad?
-        Expanded(
-          child:  listView(listRoles),
-        ) : Center(child: Padding(
+        listView(listRoles) : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
         )),
@@ -172,6 +170,8 @@ class _RolePageState extends State<RolePage> {
     }
     return ListView.separated(
       itemCount: listRoles.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         RoleModel role = listRoles[index] ;
         return GestureDetector(

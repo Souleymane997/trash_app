@@ -142,9 +142,7 @@ class _SecteurPageState extends State<SecteurPage> {
         ),
         const Gap(16),
         isLoad?
-        Expanded(
-          child:  listView(listSecteur),
-        ) : Center(child: Padding(
+        listView(listSecteur) : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
         )),
@@ -177,6 +175,8 @@ class _SecteurPageState extends State<SecteurPage> {
 
     return ListView.separated(
       itemCount: list.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         SecteurModel item = list[index] ;
         return GestureDetector(

@@ -227,7 +227,7 @@ class _NotifPageState extends State<NotifPage> {
         ),
         const Gap(4),
         isLoad?
-        Expanded(child: gridView( list,))
+        gridView( list,)
             : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
@@ -272,6 +272,8 @@ class _NotifPageState extends State<NotifPage> {
         }else{
           return GridView.builder(
             padding: const EdgeInsets.all(16),
+            shrinkWrap: true, // ✅ important
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
               crossAxisSpacing: 16,

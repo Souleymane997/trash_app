@@ -143,9 +143,7 @@ class _ArrondPageState extends State<ArrondPage> {
         const Gap(16),
 
         isLoad?
-        Expanded(
-          child:  listView(listArrondissement),
-        ) : Center(child: Padding(
+        listView(listArrondissement) : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
         )),
@@ -163,7 +161,7 @@ class _ArrondPageState extends State<ArrondPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(3.0),
+              padding: const EdgeInsets.only(top: 100.0, bottom: 3.0, left: 3.0, right: 3.0),
               child: SvgPicture.asset(
                 'assets/icons/empty.svg',
                 height: 100,
@@ -179,6 +177,8 @@ class _ArrondPageState extends State<ArrondPage> {
 
     return ListView.separated(
       itemCount: list.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         ArrondissementModel item = list[index] ;
         return GestureDetector(

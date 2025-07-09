@@ -174,93 +174,95 @@ class _LoginWebState extends State<LoginWeb> {
     return Scaffold(
         backgroundColor: grisLight(),
         body: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 400),
-            child: Card(
-              elevation: 20,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage: AssetImage('assets/logos/logo1.png'),
-                      ),
-                      SizedBox(height: 14,),
-                      Center(
-                        child: CustomText(
-                          'Se Connecter ',
-                          family: 'Inter',
-                          tex: 1.5,
-                          color: vert(),
-                          fontWeight: FontWeight.w700,
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 400),
+              child: Card(
+                elevation: 20,
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: AssetImage('assets/logos/logo1.png'),
                         ),
-                      ),
-                      const SizedBox(height: 32),
-                      TextFormField(
-                        controller: _emailController,
-                        decoration: _inputDecoration("Email"),
-                        keyboardType:TextInputType.text,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) return 'Email requis';
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      // Email
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: _obscureText,
-                        keyboardType:TextInputType.text,
-                        decoration: InputDecoration(
-                          labelText: 'Mot de passe',
-                          filled: true,
-                          hintStyle: TextStyle(color: grisLight()),
-                          fillColor: blanc(),
-                          contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide(color: vert()),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide(color: vert(), width: 2),
-                          ),
-                        border: OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                              _obscureText ? Icons.visibility : Icons.visibility_off),
-                          onPressed: () =>
-                              setState(() => _obscureText = !_obscureText),
-                        ),
-                      ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) return 'Mot de passe requis';
-                          if (value.length < 6) return '6 caractères minimum';
-                          return null;
-                        },
-                      ),
-
-                      SizedBox(height: 30),
-                      ElevatedButton(
-                        onPressed: _login,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: vert(),
-                          foregroundColor: blanc(),
-                          padding: EdgeInsets.symmetric(horizontal: 60, vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            side: BorderSide(color: vert(), width: 1),
+                        SizedBox(height: 14,),
+                        Center(
+                          child: CustomText(
+                            'Se Connecter ',
+                            family: 'Inter',
+                            tex: 1.5,
+                            color: vert(),
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        child:change ? CircularProgressIndicator(color: blanc()) : CustomText("Se connecter", family: 'Inter', fontWeight: FontWeight.w500,),
-                      ),
-                      SizedBox(height: 30,),
-
-                    ],
+                        const SizedBox(height: 32),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: _inputDecoration("Email"),
+                          keyboardType:TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return 'Email requis';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        // Email
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscureText,
+                          keyboardType:TextInputType.text,
+                          decoration: InputDecoration(
+                            labelText: 'Mot de passe',
+                            filled: true,
+                            hintStyle: TextStyle(color: grisLight()),
+                            fillColor: blanc(),
+                            contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(color: vert()),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(color: vert(), width: 2),
+                            ),
+                          border: OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                                _obscureText ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () =>
+                                setState(() => _obscureText = !_obscureText),
+                          ),
+                        ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return 'Mot de passe requis';
+                            if (value.length < 6) return '6 caractères minimum';
+                            return null;
+                          },
+                        ),
+            
+                        SizedBox(height: 30),
+                        ElevatedButton(
+                          onPressed: _login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: vert(),
+                            foregroundColor: blanc(),
+                            padding: EdgeInsets.symmetric(horizontal: 60, vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              side: BorderSide(color: vert(), width: 1),
+                            ),
+                          ),
+                          child:change ? CircularProgressIndicator(color: blanc()) : CustomText("Se connecter", family: 'Inter', fontWeight: FontWeight.w500,),
+                        ),
+                        SizedBox(height: 30,),
+            
+                      ],
+                    ),
                   ),
                 ),
               ),

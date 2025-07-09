@@ -6,8 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:intersperse/intersperse.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 import 'package:trash_app/controllers/user_controller.dart';
 
 import '../../../models/users_model.dart';
@@ -15,7 +13,6 @@ import '../../../shared/colors.dart';
 import '../../../shared/custom_text.dart';
 import '../components/content_view.dart';
 import '../components/page_header.dart';
-import '../components/summary_card.dart';
 import 'add_admin.dart';
 import 'edit_admin.dart';
 
@@ -84,12 +81,6 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveBreakpoints.of(context);
-    var summaryCards = [
-      SummaryCard(title: "Nombre d'Administrateurs ", value: '$nbre'),
-    ];
-
-
     return ContentView(child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -98,15 +89,7 @@ class _AdminPageState extends State<AdminPage> {
           description: "Vue d'ensemble des Administrateurs",
         ),
         const Gap(16),
-        if (responsive.isMobile)
-          ...summaryCards
-        else
-          Row(
-            children: summaryCards
-                .map<Widget>((card) => Expanded(child: card))
-                .intersperse(const Gap(16))
-                .toList(),
-          ),
+        
         const Gap(32),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -152,9 +135,7 @@ class _AdminPageState extends State<AdminPage> {
         const Gap(16),
 
         isLoad?
-        Expanded(
-          child:  listView(listUsers),
-        ) : Center(child: Padding(
+        listView(listUsers) : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
         )),
@@ -172,7 +153,7 @@ class _AdminPageState extends State<AdminPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(3.0),
+            padding: const EdgeInsets.only(top: 100.0, bottom: 3.0, left: 3.0, right: 3.0),
             child: SvgPicture.asset(
               'assets/icons/empty.svg',
               height: 100,
@@ -187,6 +168,8 @@ class _AdminPageState extends State<AdminPage> {
     }
     return ListView.separated(
       itemCount: list.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         UserModel user = list[index] ;
         return GestureDetector(

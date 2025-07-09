@@ -162,9 +162,7 @@ class _ServicesPagesState extends State<ServicesPages> {
         const Gap(16),
 
         isLoad?
-        Expanded(
-          child:  listView(list),
-        ) : Center(child: Padding(
+        listView(list) : Center(child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
           child: CircularProgressIndicator(),
         )),
@@ -228,72 +226,72 @@ class _ServicesPagesState extends State<ServicesPages> {
           ),
           const SizedBox(height: 4),
 
-          Expanded(
-            child: ListView.separated(
-              itemCount: list.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 6),
-              itemBuilder: (context, index) {
-                ServiceModel item = list[index];
-      
-                return GestureDetector(
-                  onTap: () {
-                    openEditServiceDialog(item);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icons/serv.svg',
-                                    height: 24,
-                                    width: 24,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      item.nom_service,
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+          ListView.separated(
+            itemCount: list.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (context, index) => const SizedBox(height: 6),
+            itemBuilder: (context, index) {
+              ServiceModel item = list[index];
 
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '${item.nbre} fois/semaine',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 14),
-                              ),
+              return GestureDetector(
+                onTap: () {
+                  openEditServiceDialog(item);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icons/serv.svg',
+                                  height: 24,
+                                  width: 24,
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    item.nom_service,
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
 
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '${item.tarif} Fcfa',
-                                textAlign: TextAlign.end,
-                                style: const TextStyle(fontSize: 14),
-                              ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              '${item.nbre} fois/semaine',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 14),
                             ),
-                          ],
-                        ),
-                        Divider(),
-                      ],
-                    ),
+                          ),
+
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              '${item.tarif} Fcfa',
+                              textAlign: TextAlign.end,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(),
+                    ],
                   ),
-                );
+                ),
+              );
 
-              },
-            ),
+            },
           ),
         ],
       ),

@@ -1,4 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:trash_app/shared/colors.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -31,3 +34,69 @@ class SummaryCard extends StatelessWidget {
     );
   }
 }
+
+
+class DashboardCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final String icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const DashboardCard({super.key,
+    required this.title,
+    required this.value,
+    required this.color,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        color: color,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/$icon',
+                    height: 24,
+                    width: 24,
+                    color: blanc(),
+                    semanticsLabel: icon,
+                  ),
+                  const SizedBox(height: 16),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      value,
+                      style: TextStyle(color: blanc()),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: blanc()),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+

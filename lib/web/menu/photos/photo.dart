@@ -107,7 +107,7 @@ class _ViolationPhotoPageState extends State<ViolationPhotoPage> {
             const Gap(16),
 
             isLoad?
-            Expanded(child: gridView( listPhotoViolation,))
+            gridView( listPhotoViolation,)
                 : Center(child: Padding(
               padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
               child: CircularProgressIndicator(),
@@ -140,7 +140,7 @@ class _ViolationPhotoPageState extends State<ViolationPhotoPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.all(3.0),
+                padding: const EdgeInsets.only(top: 100.0, bottom: 3.0, left: 3.0, right: 3.0),
                 child: SvgPicture.asset(
                   'assets/icons/empty.svg',
                   height: 100,
@@ -155,6 +155,8 @@ class _ViolationPhotoPageState extends State<ViolationPhotoPage> {
         }else{
           return GridView.builder(
             padding: const EdgeInsets.all(16),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
               crossAxisSpacing: 16,
