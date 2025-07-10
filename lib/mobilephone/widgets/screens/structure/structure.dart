@@ -35,6 +35,7 @@ class _StructurePageState extends State<StructurePage> {
   String idStructure = "";
   bool isAbonned = false;
   bool requeteAlreadySend = false ;
+  bool requeteRefuse = false ;
 
   List<RequeteModel> listRequete = [] ;
   late RequeteModel requete  ;
@@ -64,8 +65,18 @@ class _StructurePageState extends State<StructurePage> {
     List<RequeteModel?> list = await RequeteController().getListRequetebyUser(idStructure) ;
     if (list.isNotEmpty) {
       setState(() {
-        requeteAlreadySend = true ;
         requete = list.first! ;
+
+        if(requete.statut=='Refuser'){
+          requeteAlreadySend = false ;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Votre dernière requête a été refusée.',style: TextStyle(fontSize: 14), textAlign: TextAlign.center,) , backgroundColor: red(),),
+          );
+        }
+        else{
+          requeteAlreadySend = true ;
+        }
       });
     }
   }

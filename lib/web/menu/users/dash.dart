@@ -192,7 +192,7 @@ class _DashPageState extends State<DashPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PageHeader(
-              title:(widget.idRole == 2) ? 'Bienvenue, ${structure?.nomStructure.toString()} ' : 'Bienvenue, Administrateur ',
+              title:(widget.idRole == 2) ? 'Bienvenue  ${structure?.nomStructure.toString()} ' : 'Bienvenue, Administrateur ',
               description: " Vue d'ensemble sur vos données ",
             ),
             const Gap(10),
@@ -212,6 +212,7 @@ class _DashPageState extends State<DashPage> {
                         onTap: () => _navigateTo(context, 1),
                       ),
                     ),
+                    if (widget.idRole == 2)
                     ResponsiveGridCol(
                       lg: 6,
                       xs: 6,
@@ -239,6 +240,7 @@ class _DashPageState extends State<DashPage> {
                         onTap: () => _navigateTo(context, 2),
                       ),
                     ),
+                    if (widget.idRole == 2)
                     ResponsiveGridCol(
                       lg: 6,
                       xs: 6,
@@ -253,6 +255,7 @@ class _DashPageState extends State<DashPage> {
                         },
                       ),
                     ),
+                    if (widget.idRole == 2)
                     ResponsiveGridCol(
                       lg: 6,
                       xs: 6,
@@ -267,6 +270,7 @@ class _DashPageState extends State<DashPage> {
                         },
                       ),
                     ),
+                    if (widget.idRole == 2)
                     ResponsiveGridCol(
                       lg: 6,
                       xs: 6,

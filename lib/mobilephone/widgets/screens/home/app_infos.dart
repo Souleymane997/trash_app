@@ -47,7 +47,7 @@ class _AppInfosState extends State<AppInfos> {
               backgroundImage: AssetImage('assets/logos/logo1.png'),
             ),
             CustomText(
-              'Trash Track',
+              'Trash App',
               tex: 2.0,
               color: vert(),
               textAlign: TextAlign.center,
@@ -56,17 +56,17 @@ class _AppInfosState extends State<AppInfos> {
             ),
             SizedBox(height: 15,),
             CustomText(
-              'Trash Track est une solution innovante dédiée à la gestion du ramassage des ordures dans les arrondissements de Ouagadougou. \n\nGrâce à une plateforme intelligente, Trash Track optimise les tournées de collecte, assure un suivi en temps réel et améliore la propreté urbaine. \n',
+              'Trash App est une solution innovante dédiée à la gestion du ramassage des ordures dans les arrondissements de Ouagadougou. \n\nGrâce à une plateforme intelligente, Trash App optimise les tournées de collecte, assure un suivi en temps réel et améliore la propreté urbaine. \n',
               color: noir(),
             ),
             CustomText(
-                'Trash Track vise à rendre la ville plus propre, plus saine et plus agréable pour tous.', color: noir(),),
+                'Trash App vise à rendre la ville plus propre, plus saine et plus agréable pour tous.', color: noir(),),
             Gap(30),
 
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: CustomText(
-                'Contactez-nous \n Téléphone : +226 70 00 00 00 \nEmail : contact@trashtrack.bf\n Adresse : Ouagadougou, Burkina Faso', color: noir(),
+                'Contactez-nous \n Téléphone : +226 70 00 00 00 \nEmail : contact@trashapp.bf\n Adresse : Ouagadougou, Burkina Faso', color: noir(),
                 fontWeight: FontWeight.w700,
               ),
             ),

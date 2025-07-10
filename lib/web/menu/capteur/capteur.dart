@@ -71,14 +71,14 @@ class _CapteurPageState extends State<CapteurPage> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveBreakpoints.of(context);
     var summaryCards = [
-      SummaryCard(title: "Nombre de Poubelles remplies ", value: '$nbre'),
+      SummaryCard(title: "Nombre de Capteurs ", value: '1'),
     ];
     return ContentView(child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const PageHeader(
           title: 'Gestion des Capteurs',
-          description: "liste des poubelles Remplies ",
+          description: "liste des Capteurs ",
         ),
         const Gap(16),
         if (responsive.isMobile)

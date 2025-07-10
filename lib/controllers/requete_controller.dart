@@ -34,7 +34,8 @@ class RequeteController with ChangeNotifier {
           .select()
           .eq('structure_id', idStructure)
           .eq('user_id', userId)
-          .inFilter('statut', ['En attente', 'Acceptee']);
+          .inFilter('statut', ['En attente', 'Acceptee','Refuser'])
+          .order('requete_id', ascending: false);
 
       _list =
           (response as List)
@@ -315,6 +316,18 @@ class RequeteController with ChangeNotifier {
     notifyListeners();
 
     return false;
+  }
+
+
+  Future<bool> delete(int idRequete) async {
+    try {
+
+      final delete = await supabase.from('requetes').delete().eq('requete_id', idRequete);
+      return true;
+    } catch (e) {
+      debugPrint("Erreur lors de la suppression : $e");
+      return false;
+    }
   }
 
 }

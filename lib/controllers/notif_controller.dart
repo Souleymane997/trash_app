@@ -51,7 +51,7 @@ class NotifController with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await supabase.from('notifications').select().eq('structure_id',userId).eq('lecture', false);
+      final response = await supabase.from('notifications').select().eq('structure_id',userId).eq('lecture', false).order('notification_id', ascending: false);
 
       _list = (response as List)
           .map((e) => NotifModel.fromJson(e as Map<String, dynamic>))
@@ -92,7 +92,7 @@ class NotifController with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await supabase.from('notifications').select().eq('structure_id',userId);
+      final response = await supabase.from('notifications').select().eq('structure_id',userId).order('notification_id', ascending: false);
       _list = (response as List)
           .map((e) => NotifModel.fromJson(e as Map<String, dynamic>))
           .toList();
@@ -161,8 +161,31 @@ class NotifController with ChangeNotifier {
   Future<bool> delete(int id) async {
     try {
 
-      final delete = await supabase.from('notifications').delete().eq('notification_id', id);
-      return true;
+      final response = await supabase.from('notifications').select().eq('notification_id',id).limit(1);
+
+      if(response.isNotEmpty){
+        _list = (response as List)
+            .map((e) => NotifModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+
+        int idRequete = _list.first.requete_id ;
+
+        final delete1 = await supabase.from('requetes').delete().eq('requete_id', idRequete);
+
+        final delete = await supabase.from('notifications').delete().eq('notification_id', id);
+
+        return true;
+
+      }
+      else{
+        return false ;
+      }
+
+
+
+
+
+
     } catch (e) {
       debugPrint("Erreur lors de la suppression : $e");
       return false;

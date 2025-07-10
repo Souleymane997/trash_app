@@ -67,17 +67,17 @@ class DashboardCard extends StatelessWidget {
                 children: [
                   SvgPicture.asset(
                     'assets/icons/$icon',
-                    height: 24,
-                    width: 24,
+                    height: 32,
+                    width: 32,
                     color: blanc(),
                     semanticsLabel: icon,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       value,
-                      style: TextStyle(color: blanc()),
+                      style: TextStyle(color: blanc(), fontSize: 20),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -86,8 +86,8 @@ class DashboardCard extends StatelessWidget {
                     child: Text(
                       title,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: blanc()),
-                    ),
+                      style: TextStyle(color: blanc(), fontSize: 20),
+                    )
                   ),
                 ],
               );
