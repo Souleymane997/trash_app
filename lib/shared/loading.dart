@@ -18,3 +18,22 @@ class Loading extends StatelessWidget {
     );
   }
 }
+
+class LoadingExtend extends StatelessWidget {
+  const LoadingExtend({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: noir().withValues(alpha: 0.75),
+      width: double.infinity,
+      height: double.infinity,
+      child: Center(
+        child: SpinKitCircle(
+          color: blanc(),
+          size: 50.0,
+        ),
+      ),
+    );
+  }
+}

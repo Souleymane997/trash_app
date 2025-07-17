@@ -8,18 +8,21 @@ import 'package:gap/gap.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:trash_app/controllers/user_controller.dart';
 import 'package:trash_app/models/users_model.dart';
+import 'package:trash_app/shared/loading.dart';
 import 'package:trash_app/web/menu/components/content_view.dart';
 import 'package:trash_app/web/menu/components/summary_card.dart';
 
 
 import '../../../controllers/abonnement.dart';
 import '../../../controllers/arrond_controllers.dart';
+import '../../../controllers/capteur_controller.dart';
 import '../../../controllers/notif_controller.dart';
 import '../../../controllers/photo_controller.dart';
 import '../../../controllers/secteur_controllers.dart';
 import '../../../controllers/structures_controller.dart';
 import '../../../models/abonn_model.dart';
 import '../../../models/arrondissement.dart';
+import '../../../models/capteur_model.dart';
 import '../../../models/notif_model.dart';
 import '../../../models/photo_model.dart';
 import '../../../models/secteur.dart';
@@ -43,22 +46,25 @@ class _DashPageState extends State<DashPage> {
   late List<StructureModel> listStructure = [];
   late List<String> listStringStructure = [];
   bool isLoad = false ;
+  bool isLoading = false ;
   int nbre = 0 ;
   int nbreP = 0 ;
   int nbreSect = 0 ;
   int nbreAbon = 0 ;
   int nbreArrond = 0 ;
   int nbreNotifs = 0 ;
+  int nbreCapteur = 0 ;
   int nbreStructure = 0 ;
   StructureModel? structure ;
   int idArrond = 0 ;
+
 
 
   getListAbonn() async {
     List<AbonnUserModel?> listUsers = await AbonnementController().getAllAbonnUsers();
 
     if (listUsers.isNotEmpty) {
-      Timer(Duration(seconds: 2), () {
+      Timer(Duration(milliseconds:300), () {
         setState(() {
           nbreAbon = listUsers.length ;
         });
@@ -73,7 +79,7 @@ class _DashPageState extends State<DashPage> {
 
     List<NotifModel> lists = await  NotifController().getList();
 
-    Timer(Duration(seconds: 1), () {
+    Timer(Duration(milliseconds:300), () {
       setState(() {
         nbreNotifs = lists.length ;
       });
@@ -82,7 +88,7 @@ class _DashPageState extends State<DashPage> {
 
     List<ArrondissementModel> list = await ArrondController().getListArrondissement();
 
-    Timer(Duration(seconds: 1), () {
+    Timer(Duration(milliseconds:300), () {
       setState(() {
         nbreArrond = list.length ;
       });
@@ -90,18 +96,36 @@ class _DashPageState extends State<DashPage> {
 
     List<SecteurModel> listSect = await SecteurController().getSecteursWithArrondissement() ;
 
-    Timer(Duration(seconds: 1), () {
+    Timer(Duration(milliseconds:300), () {
       setState(() {
         nbreSect = listSect.length ;
       });
     });
 
     List<PhotoModel?> listP = await PhotoController().getListPhotos() ;
-    Timer(Duration(seconds: 1), () {
+    Timer(Duration(milliseconds:300 ), () {
       setState(() {
         nbreP = listP.length ;
       });
     });
+
+    List<CapteurStringModel?> listC = await CapteurController().getListCapteur();
+
+    if(list.isNotEmpty){
+      Timer(Duration(milliseconds: 300), () {
+        setState(() {
+          nbreCapteur = listC.length ;
+        });
+      });
+    }
+
+    Timer(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = true ;
+      });
+    });
+
+
 
   }
 
@@ -111,7 +135,7 @@ class _DashPageState extends State<DashPage> {
     setState(() {
       list = listUsers ;
     });
-    Timer(Duration(seconds: 2), () {
+    Timer(Duration(milliseconds:500), () {
       setState(() {
         isLoad = true ;
         nbre = list.length ;
@@ -123,7 +147,7 @@ class _DashPageState extends State<DashPage> {
     setState(() {
       listStructure= lists ;
     });
-    Timer(Duration(seconds: 2), () {
+    Timer(Duration(milliseconds:500), () {
       setState(() {
         isLoad = true ;
         nbreStructure = listStructure.length ;
@@ -187,8 +211,9 @@ class _DashPageState extends State<DashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ContentView(
-        child: Column(
+    return Stack(
+      children:[ ContentView(
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PageHeader(
@@ -262,7 +287,7 @@ class _DashPageState extends State<DashPage> {
                       md: 6,
                       child: DashboardCard(
                         title: 'Nombre de Capteurs installés',
-                        value: '1',
+                        value: '$nbreCapteur',
                         color: vert(),
                         icon: 'sensor.svg',
                         onTap: () {
@@ -336,7 +361,10 @@ class _DashPageState extends State<DashPage> {
             const Gap(24),
 
           ],
-        ));
+                    )),
+        isLoading? Container():LoadingExtend()
+    ]
+    );
   }
 
   void _navigateTo(BuildContext context, int index) {

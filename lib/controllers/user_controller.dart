@@ -261,6 +261,34 @@ class UserController with ChangeNotifier {
     }
   }
 
+  Future<bool> deleteUserByStructure(int idArrond) async {
+    try {
+      List<UserModel> listes = await getUserWithArrondissement(idArrond: idArrond) ;
+
+      if(listes.isEmpty){
+        return true ;
+      }
+      final response = await supabase.from('users').delete().eq('role_id', 1).eq('arrondissement_id', idArrond);
+
+
+      if (response.status == 200) {
+        if (kDebugMode) {
+          print('Utilisateur supprimé');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Erreur: ${response.data}');
+        }
+      }
+
+
+      return true;
+    } catch (e) {
+      debugPrint("Erreur lors de la suppression : $e");
+      return false;
+    }
+  }
+
 }
 
 

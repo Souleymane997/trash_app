@@ -57,7 +57,6 @@ class _AddUserState extends State<AddUser> {
 
       }
     }
-
     getListSecteur();
   }
 

@@ -77,8 +77,6 @@ class RoleController with ChangeNotifier {
   }
 
 
-
-
   Future<bool> deleteRole(int roleId) async {
     try {
       final response = await Supabase.instance.client

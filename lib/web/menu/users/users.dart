@@ -46,6 +46,7 @@ class _UsersPageState extends State<UsersPage> {
   int idArrond = 0 ;
 
 
+
   getListAbonn() async {
     List<AbonnUserModel?> listUsers = await AbonnementController().getAllAbonnUsers();
 
@@ -98,7 +99,6 @@ class _UsersPageState extends State<UsersPage> {
       });
     });
 
-    getListAbonn() ;
 
     for (var item in list) {
       for (var structure in listStructure) {
@@ -107,6 +107,8 @@ class _UsersPageState extends State<UsersPage> {
         }
       }
     }
+
+    getListAbonn() ;
 
   }
 
@@ -290,12 +292,11 @@ Widget listView( List<UserModel> listUsers , List<String> listStringStructure ){
           ),
         ),
         const SizedBox(height: 4),
-
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: listUsers.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 6),
+          separatorBuilder: (context, index) => const SizedBox(height: 3),
           itemBuilder: (context, index) {
             UserModel item = listUsers[index];
             return GestureDetector(
@@ -342,7 +343,6 @@ Widget listView( List<UserModel> listUsers , List<String> listStringStructure ){
                             style: const TextStyle(fontSize: 11),
                           ),
                         ),
-
                         Expanded(
                           flex: 2,
                           child: Text(
@@ -358,7 +358,6 @@ Widget listView( List<UserModel> listUsers , List<String> listStringStructure ){
                 ),
               ),
             );
-
           },
         ),
       ],

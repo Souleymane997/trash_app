@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:trash_app/controllers/structures_controller.dart';
+import 'package:trash_app/controllers/user_controller.dart';
 import 'package:trash_app/models/structure_model.dart';
 
 import '../../../../controllers/arrond_controllers.dart';
@@ -75,21 +76,32 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
       isLoad = false ;
     });
 
-    bool res = await StructureController().deleteStructure(id);
-    if (kDebugMode) {
-      print(res.toString()) ;
-    }
 
-    if(res){
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Structure Supprimé') , backgroundColor: vert(),),
-      );
-      Timer(Duration(seconds: 2), () {
-        setState(() {
-          isLoad = true ;
+    bool res1 = await UserController().deleteUserByStructure(widget.item.arrondissement_id) ;
+
+    if(res1){
+      bool res = await StructureController().deleteStructure(id);
+      if (kDebugMode) {
+        print(res.toString()) ;
+      }
+
+      if(res){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Structure Supprimé') , backgroundColor: vert(),),
+        );
+        Timer(Duration(seconds: 2), () {
+          setState(() {
+            isLoad = true ;
+          });
+          Navigator.pop(context, true);
         });
-        Navigator.pop(context, true);
-      });
+      }
+      else{
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur') , backgroundColor: red(),),
+        );
+      }
     }
     else{
 
@@ -97,6 +109,10 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
         SnackBar(content: Text('Erreur') , backgroundColor: red(),),
       );
     }
+
+
+
+
   }
 
 
