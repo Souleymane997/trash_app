@@ -73,7 +73,6 @@ class _DashPageState extends State<DashPage> {
       setState(() {
         nbreAbon = 0 ;
       });
-      return;
     }
 
 
@@ -154,15 +153,16 @@ class _DashPageState extends State<DashPage> {
       });
     });
 
-    getListAbonn() ;
+      getListAbonn() ;
 
-    for (var item in list) {
-      for (var structure in listStructure) {
-        if (item.arrondissement_id == structure.arrondissement_id) {
-          listStringStructure.add(structure.nomStructure);
-        }
-      }
-    }
+
+    // for (var item in list) {
+    //   for (var structure in listStructure) {
+    //     if (item.arrondissement_id == structure.arrondissement_id) {
+    //       listStringStructure.add(structure.nomStructure);
+    //     }
+    //   }
+    // }
 
   }
 
@@ -217,7 +217,7 @@ class _DashPageState extends State<DashPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PageHeader(
-              title:(widget.idRole == 2) ? 'Bienvenue  ${structure?.nomStructure.toString()} ' : 'Bienvenue, Administrateur ',
+              title:(widget.idRole == 2) ? 'Bienvenue ${structure?.nomStructure.toString()} ' : 'Bienvenue Administrateur ',
               description: " Vue d'ensemble sur vos données ",
             ),
             const Gap(10),

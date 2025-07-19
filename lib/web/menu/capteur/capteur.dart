@@ -415,12 +415,12 @@ Widget listView(List<CapteurModel?> list){
                                 height: 24,
                                 width: 24,
                                 color: vert(),
-                                semanticsLabel: 'structure',
+                                semanticsLabel: 'prochain',
                               ),
                             ),
                             title: Center(
                               child: Text(
-                                'Etat de la Poubelle : ${item!.fill_state}',
+                                '${item!.fill_state} à ${item.pourcent.toStringAsFixed(2)} %',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,

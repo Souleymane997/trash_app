@@ -33,6 +33,7 @@ class _AddStructureDialogState extends State<AddStructureDialog> {
 
 
   bool isLoad = true ;
+  bool _obscureText = true;
   bool valid = false ;
   late List<ArrondissementModel> listArrond = [] ;
   ArrondissementModel? selectedArrondissement;
@@ -158,8 +159,20 @@ class _AddStructureDialogState extends State<AddStructureDialog> {
                   child: TextFormField(
                     textAlign: TextAlign.start,
                     controller: passwordController,
-                    obscureText: true,
-                    decoration: _inputDecoration("password"),
+                    obscureText: _obscureText,
+                    decoration: _inputDecoration("password").copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed:
+                            () => setState(
+                              () => _obscureText = !_obscureText,
+                        ),
+                      ),
+                    ),
                     keyboardType:TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) return 'password requis';

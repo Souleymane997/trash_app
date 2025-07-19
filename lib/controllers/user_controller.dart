@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:trash_app/models/users_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 class UserController with ChangeNotifier {
@@ -250,13 +252,64 @@ class UserController with ChangeNotifier {
 
 
 
-  Future<bool> deleteUser(int id) async {
+  Future<bool> deleteUser(String userId) async {
     try {
-      final response = await supabase.from('users').delete().eq('id', id);
+      final supabase = Supabase.instance.client;
+      
+      final response = await http.post(
+        Uri.parse('https://syjsibsbjickquqpvjae.supabase.co/functions/v1/delete-user'),
+        headers: {
+          'Authorization': 'Bearer ${supabase.auth.currentSession?.accessToken}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'userId': userId,
+        }),
+      );
 
-      return true;
+      if (response.statusCode == 200) {
+        debugPrint("Utilisateur supprimé avec succès");
+        return true;
+      } else {
+        final errorData = jsonDecode(response.body);
+        debugPrint("Erreur lors de la suppression: ${errorData['error']}");
+        return false;
+      }
     } catch (e) {
-      debugPrint("Erreur lors de la suppression : $e");
+      debugPrint("Erreur lors de la suppression de l'utilisateur: $e");
+      return false;
+    }
+  }
+
+  Future<bool> deleteUserByStruct(String userId) async {
+    try {
+      final supabase = Supabase.instance.client;
+
+      final res = await supabase.functions.invoke('delete-user', body: {'userId': userId});
+      final data = res.data;
+
+      final response = await http.post(
+        Uri.parse('https://syjsibsbjickquqpvjae.supabase.co/functions/v1/delete-user'),
+        headers: {
+          'Authorization': 'Bearer ${supabase.auth.currentSession?.accessToken}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'userId': userId,
+        }),
+      );
+
+
+      if (response.statusCode == 200) {
+        debugPrint("Utilisateur supprimé avec succès");
+        return true;
+      } else {
+        final errorData = jsonDecode(response.body);
+        debugPrint("Erreur lors de la suppression: ${errorData['error']}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Erreur lors de la suppression de l'utilisateur: $e");
       return false;
     }
   }

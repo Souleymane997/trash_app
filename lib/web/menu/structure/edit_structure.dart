@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:trash_app/controllers/structures_controller.dart';
 import 'package:trash_app/controllers/user_controller.dart';
 import 'package:trash_app/models/structure_model.dart';
@@ -15,6 +16,7 @@ import '../../../../controllers/arrond_controllers.dart';
 import '../../../../models/arrondissement.dart';
 import '../../../../shared/colors.dart';
 import '../../../../shared/custom_text.dart';
+import '../../../models/users_model.dart';
 
 class EditStructureDialog extends StatefulWidget {
   const EditStructureDialog({super.key, required this.item});
@@ -35,6 +37,7 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
 
 
   int idArrond = 0 ;
+  bool _obscureText = true;
   bool isLoad = true ;
   bool isDelete = false ;
 
@@ -76,10 +79,21 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
       isLoad = false ;
     });
 
+    final supabase = Supabase.instance.client;
+    await supabase.from('programme').delete().eq('structure_id',widget.item.id );
 
-    bool res1 = await UserController().deleteUserByStructure(widget.item.arrondissement_id) ;
 
-    if(res1){
+    List<UserModel> listUsers = await UserController().getUserWithArrondissement(idArrond: widget.item.arrondissement_id);
+
+
+
+
+      for(int i = 0 ; i<listUsers.length; i++){
+        await UserController().deleteUserByStruct(listUsers[i].id) ;
+      }
+
+      await UserController().deleteUserByStructure(widget.item.arrondissement_id) ;
+
       bool res = await StructureController().deleteStructure(id);
       if (kDebugMode) {
         print(res.toString()) ;
@@ -102,16 +116,6 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
           SnackBar(content: Text('Erreur') , backgroundColor: red(),),
         );
       }
-    }
-    else{
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur') , backgroundColor: red(),),
-      );
-    }
-
-
-
 
   }
 
@@ -223,8 +227,20 @@ class _EditStructureDialogState extends State<EditStructureDialog> {
                   child: TextFormField(
                     textAlign: TextAlign.start,
                     controller: passwordController,
-                    obscureText: true,
-                    decoration: _inputDecoration("password"),
+                    obscureText: _obscureText,
+                    decoration: _inputDecoration("password").copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed:
+                            () => setState(
+                              () => _obscureText = !_obscureText,
+                        ),
+                      ),
+                    ),
                     keyboardType:TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) return 'password requis';

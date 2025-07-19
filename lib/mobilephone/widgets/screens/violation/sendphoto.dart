@@ -34,21 +34,67 @@ class _SendPhotoState extends State<SendPhoto> {
   bool isLoad = false ;
 
 
-  Future<void> _pickImage() async {
+
+  // Future<void> _pickImage() async {
+  //   final picker = ImagePicker();
+  //   final picked = await picker.pickImage(
+  //     source: ImageSource.camera,
+  //     maxWidth: 800,       // Réduit la largeur
+  //     maxHeight: 800,      // Réduit la hauteur
+  //     imageQuality: 75,    // Réduit la qualité (0-100)
+  //   );
+  //
+  //   if (picked != null) {
+  //     final originalBytes = await picked.readAsBytes();
+  //     final decodedImage = img.decodeImage(originalBytes);
+  //
+  //     if (decodedImage != null) {
+  //
+  //       final compressedBytes = img.encodeJpg(decodedImage, quality: 60);
+  //
+  //       final tempDir = await getTemporaryDirectory();
+  //       final fileName = basename(picked.path);
+  //       final compressedFile = File('${tempDir.path}/compressed_$fileName');
+  //       await compressedFile.writeAsBytes(compressedBytes);
+  //
+  //       setState(() {
+  //         _image = compressedFile;
+  //       });
+  //
+  //       if (kDebugMode) {
+  //         print("Image compressée enregistrée : ${compressedFile.path}");
+  //       }
+  //     } else {
+  //       if (kDebugMode) {
+  //         print("Impossible de décoder l'image.");
+  //       }
+  //     }
+  //   }
+  // }
+
+  Future<void> _pickImage(int choice) async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 800,       // Réduit la largeur
-      maxHeight: 800,      // Réduit la hauteur
-      imageQuality: 75,    // Réduit la qualité (0-100)
-    );
+
+
+      final picked = (choice ==1 )? await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 800,       // Réduit la largeur
+        maxHeight: 800,      // Réduit la hauteur
+        imageQuality: 75,    // Réduit la qualité (0-100)
+      ) :
+   await picker.pickImage(
+        source: ImageSource.gallery, // ✅ Galerie au lieu de caméra
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 75,
+      );
+
 
     if (picked != null) {
       final originalBytes = await picked.readAsBytes();
       final decodedImage = img.decodeImage(originalBytes);
 
       if (decodedImage != null) {
-
         final compressedBytes = img.encodeJpg(decodedImage, quality: 60);
 
         final tempDir = await getTemporaryDirectory();
@@ -70,6 +116,7 @@ class _SendPhotoState extends State<SendPhoto> {
       }
     }
   }
+
 
 
 
@@ -240,14 +287,17 @@ class _SendPhotoState extends State<SendPhoto> {
 
                   (_image != null)?
                   TextButton(
-                    onPressed:_pickImage,
+                    onPressed:(){
+                      _pickImage(1) ;
+                    } ,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: CustomText('Reprendre la photo', color: vert(),),
                     ),
-                  )
-                   : ElevatedButton(
-                    onPressed: _pickImage,
+                  ) : ElevatedButton(
+                    onPressed:(){
+                      _pickImage(1) ;
+                    } ,
                     style: ElevatedButton.styleFrom(
                       backgroundColor:  (_image != null) ? gris() : vert(),
                       foregroundColor: (_image != null) ? vert() : blanc(),
@@ -258,6 +308,22 @@ class _SendPhotoState extends State<SendPhoto> {
                       ),
                     ),
                     child: Text("Prendre une photo"),
+                  ),
+                  SizedBox(height: 10,),
+                  ElevatedButton(
+                    onPressed:(){
+                      _pickImage(0) ;
+                    } ,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:  (_image != null) ? gris() : vert(),
+                      foregroundColor: (_image != null) ? vert() : blanc(),
+                      padding: EdgeInsets.symmetric(horizontal: 60, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: vert(), width: 1),
+                      ),
+                    ),
+                    child: Text("Selectionner une photo"),
                   ),
 
                 ],

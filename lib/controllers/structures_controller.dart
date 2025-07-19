@@ -57,30 +57,33 @@ class StructureController with ChangeNotifier {
       return _listStructure.first ;
     }
 
+      final userId = supabase.auth.currentUser?.id;
 
-    final userId = supabase.auth.currentUser?.id;
-
-    if (userId == null) {
-      if (kDebugMode) {
-        print("❌ Aucun utilisateur connecté.");
+      if (userId == null) {
+        if (kDebugMode) {
+          print("❌ Aucun utilisateur connecté.");
+        }
+        return null;
       }
-      return null;
-    }
 
-    final data = await supabase
-        .from('structures')
-        .select('id, nom_structure,tel,email,password, arrondissements(id, arrondissement),role(id)').eq('id', userId) ;
+      final data = await supabase
+          .from('structures')
+          .select('id, nom_structure,tel,email,password, arrondissements(id, arrondissement),role(id)').eq('id', userId) ;
 
-    _listStructure = (data as List)
-        .map((e) => StructureModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+      _listStructure = (data as List)
+          .map((e) => StructureModel.fromJson(e as Map<String, dynamic>))
+          .toList();
 
-    notifyListeners();
+      notifyListeners();
 
-    if(_listStructure.isEmpty){
-      return null ;
-    }
-    return _listStructure.first ;
+
+      if(_listStructure.isEmpty){
+        return null ;
+      }
+
+      return _listStructure.first ;
+
+
   }
 
 

@@ -70,6 +70,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   responsive_grid: ^2.4.4
+  http: ^1.1.0
 
 
 dev_dependencies:

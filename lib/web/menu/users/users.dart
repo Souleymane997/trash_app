@@ -106,6 +106,8 @@ class _UsersPageState extends State<UsersPage> {
           listStringStructure.add(structure.nomStructure);
         }
       }
+      print('lit') ;
+      print(listStringStructure.length) ;
     }
 
     getListAbonn() ;
@@ -129,7 +131,6 @@ class _UsersPageState extends State<UsersPage> {
         }
 
       });
-
 
   }
 
@@ -167,7 +168,7 @@ class _UsersPageState extends State<UsersPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PageHeader(
-              title:(widget.idRole == 2) ? 'Bienvenue, ${structure?.nomStructure.toString()} ' : 'Bienvenue, Administrateur ',
+              title:(widget.idRole == 2) ? 'Bienvenue ${structure?.nomStructure.toString()} ' : 'Bienvenue Administrateur ',
               description: " Vue d'ensemble sur vos données ",
             ),
             const Gap(10),
@@ -301,7 +302,6 @@ Widget listView( List<UserModel> listUsers , List<String> listStringStructure ){
             UserModel item = listUsers[index];
             return GestureDetector(
               onTap: () {
-
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

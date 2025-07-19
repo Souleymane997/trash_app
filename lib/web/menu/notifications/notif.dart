@@ -192,7 +192,7 @@ class _NotifPageState extends State<NotifPage> {
       children: [
         const PageHeader(
           title: 'Gestion des Notifications',
-          description: "Vue d'ensemble des structures",
+          description: "Vue d'ensemble des notifications",
         ),
         const Gap(16),
         if (responsive.isMobile)

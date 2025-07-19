@@ -86,7 +86,7 @@ class _SecteurPageState extends State<SecteurPage> {
       children: [
         const PageHeader(
           title: 'Gestion des Secteurs',
-          description: "Vue d'ensemble des structures",
+          description: "Vue d'ensemble des Secteurs",
         ),
         const Gap(16),
         if (responsive.isMobile)

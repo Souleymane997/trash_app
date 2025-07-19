@@ -104,7 +104,7 @@ class _ServicesPagesState extends State<ServicesPages> {
       children: [
         const PageHeader(
           title: 'Gestion des Services',
-          description: "Vue d'ensemble des structures",
+          description: "Vue d'ensemble des Services",
         ),
         const Gap(16),
         if (responsive.isMobile)
